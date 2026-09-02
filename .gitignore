@@ -1,0 +1,10 @@
+node_modules/
+web/dist/
+__pycache__/
+*.pyc
+.venv/
+.DS_Store
+data/dhis2_cache.json
+data/bebecare.db
+*.db
+docs/captures/

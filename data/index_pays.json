@@ -1,0 +1,107 @@
+[
+ {
+  "code": "bj",
+  "iso": "BJ",
+  "nom": "Benin",
+  "langue": "fr",
+  "nb": 961
+ },
+ {
+  "code": "bf",
+  "iso": "BF",
+  "nom": "Burkina Faso",
+  "langue": "fr",
+  "nb": 1330
+ },
+ {
+  "code": "cv",
+  "iso": "CV",
+  "nom": "Cabo Verde",
+  "langue": "pt",
+  "nb": 151
+ },
+ {
+  "code": "ci",
+  "iso": "CI",
+  "nom": "Cote d'Ivoire",
+  "langue": "fr",
+  "nb": 2589
+ },
+ {
+  "code": "gm",
+  "iso": "GM",
+  "nom": "Gambie",
+  "langue": "en",
+  "nb": 136
+ },
+ {
+  "code": "gh",
+  "iso": "GH",
+  "nom": "Ghana",
+  "langue": "en",
+  "nb": 2492
+ },
+ {
+  "code": "gn",
+  "iso": "GN",
+  "nom": "Guinee",
+  "langue": "fr",
+  "nb": 1264
+ },
+ {
+  "code": "gw",
+  "iso": "GW",
+  "nom": "Guinee-Bissau",
+  "langue": "pt",
+  "nb": 64
+ },
+ {
+  "code": "lr",
+  "iso": "LR",
+  "nom": "Liberia",
+  "langue": "en",
+  "nb": 1180
+ },
+ {
+  "code": "ml",
+  "iso": "ML",
+  "nom": "Mali",
+  "langue": "fr",
+  "nb": 1585
+ },
+ {
+  "code": "ne",
+  "iso": "NE",
+  "nom": "Niger",
+  "langue": "fr",
+  "nb": 730
+ },
+ {
+  "code": "ng",
+  "iso": "NG",
+  "nom": "Nigeria",
+  "langue": "en",
+  "nb": 7555
+ },
+ {
+  "code": "sn",
+  "iso": "SN",
+  "nom": "Senegal",
+  "langue": "fr",
+  "nb": 1955
+ },
+ {
+  "code": "sl",
+  "iso": "SL",
+  "nom": "Sierra Leone",
+  "langue": "en",
+  "nb": 567
+ },
+ {
+  "code": "tg",
+  "iso": "TG",
+  "nom": "Togo",
+  "langue": "fr",
+  "nb": 1009
+ }
+]

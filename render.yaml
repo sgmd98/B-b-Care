@@ -1,0 +1,43 @@
+services:
+  - type: web
+    name: bebecare
+    runtime: python
+    plan: free
+    region: frankfurt
+    buildCommand: |
+      pip install -r api/requirements.txt
+      cd web && npm ci && npm run build
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/sante
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: NODE_VERSION
+        value: "20"
+      # Instance DHIS2 : par defaut la demo publique officielle.
+      # Un ministere remplace ces 3 valeurs par celles de son propre SNIS.
+      - key: BEBECARE_DHIS2_URL
+        value: https://play.im.dhis2.org/stable-2-42-6
+      - key: BEBECARE_DHIS2_USER
+        value: admin
+      - key: BEBECARE_DHIS2_PASSWORD
+        value: district
+      # Ecriture DHIS2 desactivee : BebeCare ne modifie aucune base sans accord.
+      - key: BEBECARE_DHIS2_PUSH
+        value: "0"
+      # Cle de signature des jetons de session : generee une fois par Render,
+      # puis conservee -> les comptes restent connectes entre deux deploiements.
+      - key: BEBECARE_SECRET
+        generateValue: true
+      # Etage LLM de l'assistant : extraction et reformulation uniquement.
+      # La decision clinique reste 100% PCIME, jamais le modele de langage.
+      # Sans cle, l'assistant retombe sur le NLU local : rien ne casse.
+      - key: BEBECARE_LLM_FOURNISSEUR
+        value: groq
+      - key: BEBECARE_LLM_CLE
+        sync: false
+      # Base des comptes : PostgreSQL Neon (gratuit, persistant).
+      # A coller dans le dashboard Render : la chaine de connexion Neon.
+      # Si elle est absente, l'application bascule automatiquement sur SQLite.
+      - key: DATABASE_URL
+        sync: false

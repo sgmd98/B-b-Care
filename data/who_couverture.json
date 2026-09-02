@@ -1,0 +1,982 @@
+{
+ "source": "Organisation mondiale de la Sante - Global Health Observatory (WUENIC / UNICEF-WHO)",
+ "url": "https://www.who.int/data/gho",
+ "recupere_le": "2026-09-01",
+ "pays": {
+  "bj": {
+   "iso3": "BEN",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 99.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 69.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 82.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 49.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 23.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 64.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 64.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 49.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 74.7,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2021,
+     "valeur": 8.3,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "bf": {
+   "iso3": "BFA",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 98.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 91.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 95.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 88.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 65.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 91.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 86.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 85.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 74.9,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2021,
+     "valeur": 9.3,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "cv": {
+   "iso3": "CPV",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 99.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 93.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 93.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 95.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 86.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 0.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 0.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2013,
+     "valeur": 0.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 11.1,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2018,
+     "valeur": 2.4,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "ci": {
+   "iso3": "CIV",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 90.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 70.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 84.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 58.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 49.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 59.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 59.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 55.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 64.5,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2021,
+     "valeur": 8.1,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "gm": {
+   "iso3": "GMB",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 82.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 82.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 84.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 78.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 78.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 82.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 83.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 78.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 42.4,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2020,
+     "valeur": 5.1,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "gh": {
+   "iso3": "GHA",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 93.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 99.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 99.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 93.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 92.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 97.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 93.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 91.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 35.9,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2022,
+     "valeur": 5.8,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "gn": {
+   "iso3": "GIN",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 77.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 65.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 78.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 62.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 47.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 0.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 0.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 62.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 92.1,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2022,
+     "valeur": 6.4,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "gw": {
+   "iso3": "GNB",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 82.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 84.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 90.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 69.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 36.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 90.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 86.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 70.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 67.3,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2019,
+     "valeur": 7.8,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "lr": {
+   "iso3": "LBR",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 82.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 83.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 91.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 82.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 60.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 80.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 83.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 85.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 86.4,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2019,
+     "valeur": 3.4,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "ml": {
+   "iso3": "MLI",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 88.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 84.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 90.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 68.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 52.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 81.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 80.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 70.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 73.0,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2024,
+     "valeur": 5.4,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "ne": {
+   "iso3": "NER",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 88.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 87.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 95.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 82.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 80.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 87.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 91.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 82.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 110.7,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2022,
+     "valeur": 10.9,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "ng": {
+   "iso3": "NGA",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 68.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 62.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 70.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 56.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 35.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 62.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 47.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 54.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 115.6,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2021,
+     "valeur": 11.5,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "sn": {
+   "iso3": "SEN",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 93.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 91.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 94.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 92.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 78.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 91.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 90.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 91.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 36.5,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2023,
+     "valeur": 10.2,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "sl": {
+   "iso3": "SLE",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 97.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 91.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 92.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 90.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 73.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 93.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 88.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 85.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 90.5,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2021,
+     "valeur": 6.3,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  },
+  "tg": {
+   "iso3": "TGO",
+   "indicateurs": {
+    "BCG": {
+     "libelle": "Couverture BCG chez les enfants de 1 an (%)",
+     "annee": 2025,
+     "valeur": 96.0,
+     "code_oms": "WHS4_543"
+    },
+    "DTP3": {
+     "libelle": "Couverture DTC3 / Pentavalent 3 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 90.0,
+     "code_oms": "WHS4_100"
+    },
+    "DTP1": {
+     "libelle": "Couverture DTC1 chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 95.0,
+     "code_oms": "VACCINECOVERAGE_DTP1"
+    },
+    "MCV1": {
+     "libelle": "Couverture rougeole 1re dose chez les 1 an (%)",
+     "annee": 2025,
+     "valeur": 81.0,
+     "code_oms": "WHS8_110"
+    },
+    "MCV2": {
+     "libelle": "Couverture rougeole 2e dose (%)",
+     "annee": 2025,
+     "valeur": 58.0,
+     "code_oms": "MCV2"
+    },
+    "PCV3": {
+     "libelle": "Couverture pneumocoque 3 doses (%)",
+     "annee": 2025,
+     "valeur": 89.0,
+     "code_oms": "PCV3"
+    },
+    "ROTA": {
+     "libelle": "Couverture rotavirus schema complet (%)",
+     "annee": 2025,
+     "valeur": 91.0,
+     "code_oms": "ROTAC"
+    },
+    "YFV": {
+     "libelle": "Couverture fievre jaune (%)",
+     "annee": 2025,
+     "valeur": 80.0,
+     "code_oms": "VACCINECOVERAGE_YFV"
+    },
+    "U5MR": {
+     "libelle": "Mortalite des moins de 5 ans (p. 1000 naissances vivantes)",
+     "annee": 2024,
+     "valeur": 56.1,
+     "code_oms": "MDG_0000000007"
+    },
+    "WASTING": {
+     "libelle": "Emaciation chez les moins de 5 ans (%)",
+     "annee": 2017,
+     "valeur": 5.7,
+     "code_oms": "NUTRITION_WH_2"
+    }
+   }
+  }
+ }
+}
