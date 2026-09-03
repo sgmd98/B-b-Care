@@ -24,7 +24,7 @@ from .pays_meta import CATEGORIES, DHIS2_NATIONAL, PAYS
 
 app = FastAPI(
     title="BébéCare API",
-    version="2.14",
+    version="2.15",
     description="Santé de l'enfant 0-5 ans : 15 pays de la CEDEAO. "
                 "Données OMS, OpenStreetMap et DHIS2.",
 )
@@ -81,7 +81,7 @@ def sante():
     return {
         "statut": "ok",
         "service": "bebecare",
-        "version": "2.14",
+        "version": "2.15",
         "pays_charges": len(donnees.pays_charges()),
         "structures_sante": donnees.total_lieux(),
         "base": bd.description(),

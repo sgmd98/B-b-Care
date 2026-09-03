@@ -460,3 +460,28 @@ details.depliable > .corps { padding: 0 19px 19px; }
   .form-control, .form-select { font-size: 16px; }
   .onglets-modules .onglet { padding: 8px 11px; font-size: 12.5px; }
 }
+
+/* ==========================================================================
+   v2.15 : proprete mobile (retours captures terrain)
+   ========================================================================== */
+@media (max-width: 640px) {
+  /* Les stats passent 2 par ligne au lieu d'1 : moins de defilement */
+  .grille.g4 { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat .valeur { font-size: 20px; }
+
+  /* Le contenu respire mieux : marges exterieures reduites */
+  .page-body .container, .page-head .container { padding: 0 10px; }
+  .page-head { padding: 24px 0 48px; }
+  .page-head h1 { font-size: 1.5rem; }
+  .page-head p { font-size: .92rem; }
+
+  /* Onglets des modules : libelles compacts, tout tient sur une ligne */
+  .onglets-modules .onglet { padding: 8px 9px; font-size: 12px; white-space: nowrap; }
+}
+
+@media (max-width: 640px) {
+  /* Modale de compte : le bouton de validation reste visible sans defiler */
+  .voile-modale { padding: 10px; }
+  .modale { padding: 18px; border-radius: 18px; max-height: 94vh; }
+  .modale h2 { font-size: 19px; }
+}

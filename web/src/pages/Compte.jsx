@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../auth'
 import { useLangue } from '../i18n'
-import { Logo } from '../Logo'
+
 
 export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer }) {
   const { inscrire, connecter } = useAuth()
@@ -31,7 +31,7 @@ export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer }) {
     <div className="voile-modale" onClick={(e) => e.target === e.currentTarget && fermer()}>
       <div className="modale">
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
-          <Logo taille={42} />
+          <img src="/logo-bebecare.png" alt="BébéCare" style={{ height: 46, width: 'auto' }} />
           <div>
             <h2 style={{ margin: 0 }}>{mode === 'inscription' ? t('creer_compte') : t('c_connecter_titre')}</h2>
             <p style={{ margin: '3px 0 0', fontSize: 13, color: 'var(--gris)' }}>
@@ -123,7 +123,9 @@ export default function Compte({ listePays, ouvrirAuth }) {
     return (
       <div className="page">
         <div className="bloc" style={{ textAlign: 'center', padding: 44 }}>
-          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}><Logo taille={60} /></div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 16 }}>
+            <img src="/logo-bebecare.png" alt="BébéCare" style={{ height: 62, width: 'auto' }} />
+          </div>
           <h2>{t('c_creer_gratuit')}</h2>
           <p className="legende-txt" style={{ maxWidth: 520, margin: '0 auto 22px' }}>
             {t('c_jamais')}

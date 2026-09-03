@@ -60,7 +60,7 @@ export default function Vaccins({ pays, listePays }) {
           </label>
         </div>
         {dn && (
-          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 4 }}>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 4, alignItems: 'center' }}>
             <a className="bouton" style={{ textDecoration: 'none' }}
                href={api.urlPdfVaccins(pays, dn, enfant.prenom, faits, langue)}>
               {t('v_pdf')}
@@ -69,6 +69,11 @@ export default function Vaccins({ pays, listePays }) {
                href={api.urlIcs(pays, dn)}>
               {t('v_ics')}
             </a>
+            <button type="button" className="bouton sec petit"
+                    title={t('v_reset_ok')}
+                    onClick={() => { if (window.confirm(t('v_reset_ok'))) setEnfant({}) }}>
+              {t('v_reset')}
+            </button>
           </div>
         )}
       </div>

@@ -78,8 +78,8 @@ const TEXTES = {
     pied_dev: 'Développé par SOSSA G. M. Darius',
 
     // ---- assistant
-    mode_triage: '🩺 Triage des symptômes',
-    mode_question: '💬 Poser une question',
+    mode_triage: '🩺 Triage',
+    mode_question: '💬 Question libre',
     aide_triage: "Mode triage : décrivez des symptômes, l'algorithme PCIME de l'OMS rend un verdict rouge, orange ou vert.",
     aide_question: "Mode question : posez librement vos questions sur l'alimentation, le sommeil, le développement ou l'hygiène. Pas de verdict d'urgence ici, mais si votre question décrit un signe de danger, BébéCare vous le signale.",
     conv_indispo: '💤 Mode conversation indisponible',
@@ -198,6 +198,7 @@ const TEXTES = {
 
     a_intro: "Décrivez la situation avec vos mots. L'assistant comprend le français et l'anglais, tolère les fautes, gère la négation, et vous pose les questions qui manquent : comme un infirmier d'accueil.",
     a_garantie: "La recommandation n'est jamais inventée par une IA : elle est produite par l'algorithme PCIME de l'OMS. L'IA sert uniquement à comprendre ce que vous écrivez.",
+    a_comment: 'ℹ️ Comment ça marche ?',
     a_bonjour: "Bonjour. Décrivez avec vos mots ce que vous observez chez votre enfant : son âge, ce qui vous inquiète, depuis quand. Écrivez comme vous parlez, les fautes d'orthographe ne posent aucun problème.",
     q_bonjour: "Posez votre question : alimentation, sommeil, développement, hygiène, vaccination... Je réponds simplement, avec des conseils adaptés à l'Afrique de l'Ouest, et je ne pose jamais de diagnostic.",
     a_details: 'Détails de l\u2019analyse (transparence)',
@@ -269,6 +270,8 @@ const TEXTES = {
     v_calendrier_suite: ", issu du jeu de données OMS/UNICEF « Vaccine schedule ». Saisissez la date de naissance : BébéCare calcule chaque rendez-vous, repère les retards et génère un rappel d'agenda. Tout reste sur votre téléphone.",
     v_prenom: "Prénom de l'enfant (facultatif)",
     v_pdf: '📄 Mon calendrier vaccinal en PDF',
+    v_reset: '🔄 Nouvel enfant',
+    v_reset_ok: "Effacer les informations et les vaccins cochés de cet enfant ?",
     v_ics: '📅 Rappels dans mon agenda (.ics)',
     v_age: 'Âge',
     v_doses: 'Doses faites',
@@ -469,7 +472,7 @@ const TEXTES = {
     n_axe_taille: "taille (cm)",
 
     // ---- triage guide (assistant)
-    mode_guide: "☑️ Questionnaire guidé",
+    mode_guide: '☑️ Questionnaire',
     aide_guide: "Mode guidé : cochez ce que vous observez. L'algorithme PCIME rend le même verdict que l'assistant, sans rien écrire : pratique quand on est pressé.",
 
     // ---- vaccins
@@ -552,8 +555,8 @@ const TEXTES = {
     pied_dev: 'Built by SOSSA G. M. Darius',
 
     // ---- assistant
-    mode_triage: '🩺 Symptom triage',
-    mode_question: '💬 Ask a question',
+    mode_triage: '🩺 Triage',
+    mode_question: '💬 Free question',
     aide_triage: 'Triage mode: describe symptoms and the WHO IMCI algorithm returns a red, orange or green verdict.',
     aide_question: 'Question mode: ask freely about feeding, sleep, development or hygiene. No urgency verdict here, but if your question describes a danger sign, BébéCare will flag it.',
     conv_indispo: '💤 Conversation mode unavailable',
@@ -672,6 +675,7 @@ const TEXTES = {
 
     a_intro: 'Describe the situation in your own words. The assistant understands French and English, tolerates spelling mistakes, handles negation, and asks the questions that are missing, like a triage nurse.',
     a_garantie: 'The recommendation is never invented by an AI: it is produced by the WHO IMCI algorithm. The AI is only there to understand what you write.',
+    a_comment: 'ℹ️ How does it work?',
     a_bonjour: 'Hello. Describe in your own words what you notice about your child: their age, what worries you, and since when. Write as you speak, spelling mistakes are not a problem.',
     q_bonjour: "Ask your question: feeding, sleep, development, hygiene, vaccination... I answer simply, with advice suited to West Africa, and I never diagnose.",
     a_details: 'Analysis details (transparency)',
@@ -743,6 +747,8 @@ const TEXTES = {
     v_calendrier_suite: ', from the WHO/UNICEF “Vaccine schedule” dataset. Enter the date of birth: BébéCare calculates every appointment, flags overdue doses and generates a calendar reminder. Everything stays on your phone.',
     v_prenom: 'Child’s first name (optional)',
     v_pdf: '📄 My vaccination calendar as PDF',
+    v_reset: '🔄 New child',
+    v_reset_ok: "Clear this child's info and ticked vaccines?",
     v_ics: '📅 Reminders in my calendar (.ics)',
     v_age: 'Age',
     v_doses: 'Doses done',
@@ -943,7 +949,7 @@ const TEXTES = {
     n_axe_taille: "height (cm)",
 
     // ---- guided triage (assistant)
-    mode_guide: "☑️ Guided questionnaire",
+    mode_guide: '☑️ Checklist',
     aide_guide: "Guided mode: tick what you observe. The IMCI algorithm returns the same verdict as the assistant, without typing anything: handy when you are in a hurry.",
 
     // ---- vaccines

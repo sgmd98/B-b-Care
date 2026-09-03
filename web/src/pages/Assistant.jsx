@@ -111,7 +111,7 @@ export default function Assistant({ pays, listePays }) {
       <div className="bloc">
         <h2>{t('t_assistant')}</h2>
         <p className="legende-txt" style={{ marginBottom: 12 }}>
-          {t('a_intro')} <b>{t('a_garantie')}</b>
+          <b>{t('a_garantie')}</b>
         </p>
 
         <div className="onglets onglets-modules" role="tablist">
@@ -127,6 +127,13 @@ export default function Assistant({ pays, listePays }) {
         <p className="aide-mode">
           {mode === 'triage' ? t('aide_triage') : mode === 'guide' ? t('aide_guide') : t('aide_question')}
         </p>
+
+        <details className="depliable" style={{ marginBottom: 14 }}>
+          <summary>{t('a_comment')}</summary>
+          <div className="corps" style={{ paddingTop: 2 }}>
+            <p className="legende-txt" style={{ margin: 0 }}>{t('a_intro')}</p>
+          </div>
+        </details>
 
         {mode === 'guide' && <Triage pays={pays} listePays={listePays} embarque />}
 
