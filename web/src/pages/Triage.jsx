@@ -30,8 +30,8 @@ export default function Triage({ pays, listePays, embarque = false }) {
   }
 
   return (
-    <div className="page">
-      <div className="bloc">
+    <div className={embarque ? '' : 'page'}>
+      <div className={embarque ? '' : 'bloc'}>
         {!embarque && (
           <>
             <h2>{t('t_triage')}</h2>

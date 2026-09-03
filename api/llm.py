@@ -33,7 +33,15 @@ CONFIGURATION (variables d'environnement)
 -----------------------------------------
   BEBECARE_LLM_FOURNISSEUR : "groq" (defaut) | "gemini" | "off"
   BEBECARE_LLM_CLE         : la cle d'API
-  BEBECARE_LLM_MODELE      : facultatif, pour forcer un modele
+  BEBECARE_LLM_MODELE      : facultatif, pour forcer un modele (desactive le repli)
+
+CHAINES DE REPLI
+----------------
+Les fournisseurs retirent regulierement des modeles (ex. llama-3.3-70b-versatile
+retire par Groq le 16/08/2026). Pour ne jamais tomber en panne, chaque
+fournisseur a une liste ORDONNEE de modeles : si le premier echoue (modele
+retire, quota, panne), on tente le suivant, et on retient celui qui a repondu
+pour les appels suivants. Le triage PCIME local, lui, ne depend d'aucun modele.
 """
 from __future__ import annotations
 
@@ -49,24 +57,39 @@ CLE = os.environ.get("BEBECARE_LLM_CLE", "").strip()
 MODELE = os.environ.get("BEBECARE_LLM_MODELE", "").strip()
 DELAI = float(os.environ.get("BEBECARE_LLM_DELAI", "8"))
 
-MODELES_DEFAUT = {
-    "groq": "llama-3.3-70b-versatile",
-    "gemini": "gemini-2.0-flash",
+# Listes ordonnees : premier = prefere, les suivants = replis automatiques.
+MODELES_SECOURS = {
+    "groq": ["openai/gpt-oss-120b", "openai/gpt-oss-20b", "qwen/qwen3.6-27b"],
+    "gemini": ["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-2.0-flash"],
 }
+# Dernier modele qui a repondu correctement (teste en premier ensuite).
+_MODELE_RETENU: str | None = None
 
 # Statistiques d'usage, exposees dans /api/assistant pour la transparence.
 ETAT = {"appels": 0, "succes": 0, "echecs": 0, "dernier_echec": None, "ms_moyen": 0}
 
 
 def actif() -> bool:
-    return bool(CLE) and FOURNISSEUR in MODELES_DEFAUT
+    return bool(CLE) and FOURNISSEUR in MODELES_SECOURS
+
+
+def _candidats() -> list[str]:
+    """Modeles a essayer, dans l'ordre. Le modele retenu passe en premier."""
+    if MODELE:                                  # modele force : pas de repli
+        return [MODELE]
+    candidats = list(MODELES_SECOURS.get(FOURNISSEUR, []))
+    if _MODELE_RETENU in candidats:
+        candidats.remove(_MODELE_RETENU)
+        candidats.insert(0, _MODELE_RETENU)
+    return candidats
 
 
 def statut() -> dict:
     return {
         "actif": actif(),
         "fournisseur": FOURNISSEUR if actif() else None,
-        "modele": (MODELE or MODELES_DEFAUT.get(FOURNISSEUR)) if actif() else None,
+        "modele": (_MODELE_RETENU or (_candidats() or [None])[0]) if actif() else None,
+        "modeles_prevus": _candidats() if actif() else [],
         "role": "extraction et reformulation uniquement ; la decision reste PCIME",
         **ETAT,
     }
@@ -74,58 +97,82 @@ def statut() -> dict:
 
 # --------------------------------------------------------------- APPEL BRUT
 
-def _appeler(systeme: str, utilisateur: str, json_attendu: bool = True) -> str | None:
-    if not actif():
-        return None
-    modele = MODELE or MODELES_DEFAUT[FOURNISSEUR]
-    debut = time.time()
-    ETAT["appels"] += 1
-    try:
-        if FOURNISSEUR == "groq":
-            corps = {
-                "model": modele,
-                "messages": [
-                    {"role": "system", "content": systeme},
-                    {"role": "user", "content": utilisateur},
-                ],
-                "temperature": 0,
-                "max_tokens": 700,
-            }
-            if json_attendu:
-                corps["response_format"] = {"type": "json_object"}
+def _appel_brut(modele: str, systeme: str, utilisateur: str, json_attendu: bool) -> str:
+    """Un seul appel HTTP vers `modele`. Leve une exception en cas d'echec."""
+    if FOURNISSEUR == "groq":
+        corps = {
+            "model": modele,
+            "messages": [
+                {"role": "system", "content": systeme},
+                {"role": "user", "content": utilisateur},
+            ],
+            "temperature": 0,
+            "max_tokens": 1200,
+        }
+        if json_attendu:
+            corps["response_format"] = {"type": "json_object"}
+        # Les modeles gpt-oss raisonnent avant de repondre : on limite cet
+        # effort pour garder reponses rapides et budget de tokens preserve.
+        if modele.startswith("openai/gpt-oss"):
+            corps["reasoning_effort"] = "low"
+        r = httpx.post(
+            "https://api.groq.com/openai/v1/chat/completions",
+            headers={"Authorization": f"Bearer {CLE}"},
+            json=corps, timeout=DELAI,
+        )
+        # Certains modeles refusent le mode JSON : repli sans response_format,
+        # notre analyseur _json sait extraire un objet d'un texte libre.
+        if r.status_code == 400 and json_attendu and "json" in r.text.lower():
+            corps.pop("response_format", None)
             r = httpx.post(
                 "https://api.groq.com/openai/v1/chat/completions",
                 headers={"Authorization": f"Bearer {CLE}"},
                 json=corps, timeout=DELAI,
             )
-            r.raise_for_status()
-            texte = r.json()["choices"][0]["message"]["content"]
+        r.raise_for_status()
+        return r.json()["choices"][0]["message"]["content"]
 
-        else:  # gemini
-            corps = {
-                "system_instruction": {"parts": [{"text": systeme}]},
-                "contents": [{"parts": [{"text": utilisateur}]}],
-                "generationConfig": {"temperature": 0, "maxOutputTokens": 700},
-            }
-            if json_attendu:
-                corps["generationConfig"]["responseMimeType"] = "application/json"
-            r = httpx.post(
-                f"https://generativelanguage.googleapis.com/v1beta/models/{modele}:generateContent",
-                headers={"x-goog-api-key": CLE},
-                json=corps, timeout=DELAI,
-            )
-            r.raise_for_status()
-            texte = r.json()["candidates"][0]["content"]["parts"][0]["text"]
+    # gemini
+    corps = {
+        "system_instruction": {"parts": [{"text": systeme}]},
+        "contents": [{"parts": [{"text": utilisateur}]}],
+        "generationConfig": {"temperature": 0, "maxOutputTokens": 1200},
+    }
+    if json_attendu:
+        corps["generationConfig"]["responseMimeType"] = "application/json"
+    r = httpx.post(
+        f"https://generativelanguage.googleapis.com/v1beta/models/{modele}:generateContent",
+        headers={"x-goog-api-key": CLE},
+        json=corps, timeout=DELAI,
+    )
+    r.raise_for_status()
+    return r.json()["candidates"][0]["content"]["parts"][0]["text"]
 
-        ms = int((time.time() - debut) * 1000)
-        ETAT["succes"] += 1
-        ETAT["ms_moyen"] = int((ETAT["ms_moyen"] * (ETAT["succes"] - 1) + ms) / ETAT["succes"])
-        return texte
 
-    except Exception as exc:  # panne, quota, delai, cle invalide...
-        ETAT["echecs"] += 1
-        ETAT["dernier_echec"] = f"{type(exc).__name__}: {exc}"[:200]
+def _appeler(systeme: str, utilisateur: str, json_attendu: bool = True) -> str | None:
+    """Appel resilient : essaie les modeles dans l'ordre jusqu'a une reponse."""
+    global _MODELE_RETENU
+    if not actif():
         return None
+    debut = time.time()
+    ETAT["appels"] += 1
+    erreurs: list[str] = []
+    for modele in _candidats():
+        try:
+            texte = _appel_brut(modele, systeme, utilisateur, json_attendu)
+        except Exception as exc:  # modele retire, quota, delai, cle invalide...
+            erreurs.append(f"{modele} : {type(exc).__name__} {exc}"[:110])
+            continue
+        if texte and texte.strip():
+            _MODELE_RETENU = modele
+            ms = int((time.time() - debut) * 1000)
+            ETAT["succes"] += 1
+            ETAT["ms_moyen"] = int((ETAT["ms_moyen"] * (ETAT["succes"] - 1) + ms) / ETAT["succes"])
+            return texte
+        erreurs.append(f"{modele} : reponse vide")
+    ETAT["echecs"] += 1
+    ETAT["dernier_echec"] = ("aucun modele disponible : " + " ; ".join(erreurs))[:240]
+    return None
 
 
 def _json(texte: str | None) -> dict | None:
@@ -375,5 +422,5 @@ def repondre_question(question: str, pays: str | None = None,
         ETAT["dernier_echec"] = "reponse conversationnelle hors limites"
         return None
 
-    return {"reponse": texte, "modele": MODELE or MODELES_DEFAUT[FOURNISSEUR],
+    return {"reponse": texte, "modele": _MODELE_RETENU or (_candidats() or [None])[0],
             "fournisseur": FOURNISSEUR}

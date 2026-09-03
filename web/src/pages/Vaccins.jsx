@@ -60,10 +60,16 @@ export default function Vaccins({ pays, listePays }) {
           </label>
         </div>
         {dn && (
-          <a className="bouton sec" style={{ textDecoration: 'none', display: 'inline-block' }}
-             href={api.urlIcs(pays, dn)}>
-            {t('v_ics')}
-          </a>
+          <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 4 }}>
+            <a className="bouton" style={{ textDecoration: 'none' }}
+               href={api.urlPdfVaccins(pays, dn, enfant.prenom, faits, langue)}>
+              {t('v_pdf')}
+            </a>
+            <a className="bouton sec petit" style={{ textDecoration: 'none' }}
+               href={api.urlIcs(pays, dn)}>
+              {t('v_ics')}
+            </a>
+          </div>
         )}
       </div>
 
@@ -105,7 +111,8 @@ export default function Vaccins({ pays, listePays }) {
           <div className="bloc">
             <h3>{t('v_detaille')}</h3>
             <p className="legende-txt">{t('v_cochez')}</p>
-            <table className="t">
+                        <div className="table-scroll">
+<table className="t">
               <thead>
                 <tr>
                   <th style={{ width: 40 }}>{t('v_fait_col')}</th>
@@ -138,6 +145,7 @@ export default function Vaccins({ pays, listePays }) {
                 ))}
               </tbody>
             </table>
+            </div>
             <div className="note">
               Source : {planning.source}. {t('v_note_pev')}
             </div>

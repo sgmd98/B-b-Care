@@ -194,7 +194,8 @@ export default function Nutrition() {
           {nbMesures > 0 && (
           <div className="bloc">
             <h3>{t('n_detail')}</h3>
-            <table className="t">
+                        <div className="table-scroll">
+<table className="t">
               <thead><tr><th>{t('n_indicateur')}</th><th>{t('n_zscore')}</th><th>{t('n_interpretation')}</th><th>{t('n_repere')}</th></tr></thead>
               <tbody>
                 {Object.entries(res.indicateurs).filter(([k]) => k !== 'pb').map(([k, v]) => (
@@ -226,6 +227,7 @@ export default function Nutrition() {
                 )}
               </tbody>
             </table>
+            </div>
             <div className="note">{res.source}. {res.avertissement}</div>
           </div>
           )}

@@ -66,6 +66,13 @@ export const api = {
     body: JSON.stringify(corps),
   }),
   urlIcs: (pays, dn) => `/api/vaccins/ics?pays=${pays}&date_naissance=${dn}`,
+  urlPdfVaccins: (pays, dn, prenom, faits, langue) => {
+    const p = new URLSearchParams({ pays, date_naissance: dn })
+    if (prenom && prenom.trim()) p.set('prenom', prenom.trim())
+    if (faits && faits.length) p.set('faits', faits.join(','))
+    if (langue) p.set('langue', langue)
+    return `/api/vaccins/calendrier.pdf?${p}`
+  },
 
   depistage: (corps) => req('/api/nutrition/depistage', {
     method: 'POST', headers: { 'content-type': 'application/json' },

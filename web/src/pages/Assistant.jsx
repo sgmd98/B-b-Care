@@ -6,18 +6,27 @@ import Triage from './Triage'
 const EX_TRIAGE = ['ex_t1', 'ex_t2', 'ex_t3', 'ex_t4']
 const EX_QUESTION = ['ex_q1', 'ex_q2', 'ex_q3', 'ex_q4']
 
+// Chaque mode a SA propre conversation : fini l'interface partagee
+// entre le triage et les questions libres.
+const ACCUEIL_TRIAGE = [{ role: 'ia', texte: null, cle: 'a_bonjour' }]
+const ACCUEIL_QUESTION = [{ role: 'ia', texte: null, cle: 'q_bonjour' }]
+
+const MODES = ['triage', 'guide', 'question']
+
 export default function Assistant({ pays, listePays }) {
   const { t } = useLangue()
   const [mode, setMode] = useState('triage')
-  const [messages, setMessages] = useState([{
-    role: 'ia',
-    texte: null, cle: 'a_bonjour',
-  }])
+  const [filTriage, setFilTriage] = useState(ACCUEIL_TRIAGE)
+  const [filQuestion, setFilQuestion] = useState(ACCUEIL_QUESTION)
   const [saisie, setSaisie] = useState('')
   const [analyse, setAnalyse] = useState(null)
   const [contexte, setContexte] = useState({ age_mois: null, signes: [], posees: [] })
   const [occupe, setOccupe] = useState(false)
   const finRef = useRef(null)
+
+  // Fil actif et son mutateur : une seule logique, deux conversations distinctes.
+  const messages = mode === 'question' ? filQuestion : filTriage
+  const setMessages = mode === 'question' ? setFilQuestion : setFilTriage
 
   useEffect(() => { finRef.current?.scrollIntoView({ behavior: 'smooth' }) }, [messages])
 
@@ -101,28 +110,23 @@ export default function Assistant({ pays, listePays }) {
     <div className="page">
       <div className="bloc">
         <h2>{t('t_assistant')}</h2>
-        <p className="legende-txt">
-          {t('a_intro')}<br /><b>{t('a_garantie')}</b>
+        <p className="legende-txt" style={{ marginBottom: 12 }}>
+          {t('a_intro')} <b>{t('a_garantie')}</b>
         </p>
 
-        <div style={{ display: 'flex', gap: 8, margin: '0 0 16px', flexWrap: 'wrap' }}>
-          <button type="button" onClick={() => setMode('triage')}
-                  className={mode === 'triage' ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm'}>
-            {t('mode_triage')}
-          </button>
-          <button type="button" onClick={() => setMode('guide')}
-                  className={mode === 'guide' ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm'}>
-            {t('mode_guide')}
-          </button>
-          <button type="button" onClick={() => setMode('question')}
-                  className={mode === 'question' ? 'btn btn-primary btn-sm' : 'btn btn-ghost btn-sm'}>
-            {t('mode_question')}
-          </button>
+        <div className="onglets onglets-modules" role="tablist">
+          {MODES.map((m) => (
+            <button key={m} type="button" role="tab" aria-selected={mode === m}
+                    className={mode === m ? 'onglet actif' : 'onglet'}
+                    onClick={() => setMode(m)}>
+              {t(`mode_${m}`)}
+            </button>
+          ))}
         </div>
 
-        <div className="note" style={{ marginBottom: 16 }}>
+        <p className="aide-mode">
           {mode === 'triage' ? t('aide_triage') : mode === 'guide' ? t('aide_guide') : t('aide_question')}
-        </div>
+        </p>
 
         {mode === 'guide' && <Triage pays={pays} listePays={listePays} embarque />}
 
@@ -222,8 +226,9 @@ export default function Assistant({ pays, listePays }) {
       </div>
 
       {analyse && mode !== 'guide' && (
-        <div className="bloc">
-          <h3>{t('as_compris_h')}</h3>
+        <details className="depliable">
+          <summary>{t('a_details')}</summary>
+          <div className="corps">
           <p className="legende-txt">{t('as_compris_p')}</p>
           <div className="grille g4" style={{ marginBottom: 14 }}>
             <div className="stat">
@@ -281,7 +286,8 @@ export default function Assistant({ pays, listePays }) {
           )}
 
           <div className="note">{analyse.methode}<br /><br />{analyse.avertissement}</div>
-        </div>
+          </div>
+        </details>
       )}
     </div>
   )

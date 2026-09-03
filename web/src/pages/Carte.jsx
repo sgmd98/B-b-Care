@@ -38,6 +38,7 @@ export default function Carte({ pays, listePays, categories }) {
   const [requete, setRequete] = useState('')
   const [resultats, setResultats] = useState(null)
   const [occupe, setOccupe] = useState(false)
+  const [panneauOuvert, setPanneauOuvert] = useState(true)
 
   const couleurs = useMemo(() => {
     const c = {}
@@ -222,6 +223,8 @@ export default function Carte({ pays, listePays, categories }) {
 
   function aller(l) {
     setSelection(l)
+    // Sur telephone : on replie le panneau pour voir le point sur la carte.
+    if (window.matchMedia('(max-width: 820px)').matches) setPanneauOuvert(false)
     refCarte.current.flyTo({ center: [l.lon, l.lat], zoom: 15.5, duration: 1000 })
   }
 
@@ -231,7 +234,7 @@ export default function Carte({ pays, listePays, categories }) {
 
   return (
     <div className="zone-carte">
-      <aside className="panneau">
+      <aside className={`panneau ${panneauOuvert ? 'ouvert' : ''}`}>
         <form onSubmit={chercher} className="groupe">
           <div className="recherche-barre">
             <span className="loupe">🔍</span>
@@ -316,6 +319,12 @@ export default function Carte({ pays, listePays, categories }) {
 
       <div className="leaflet-wrap">
         <div ref={refDiv} style={{ height: '100%', width: '100%' }} />
+        <button type="button" className="btn-panneau"
+                title={panneauOuvert ? t('c_voir_carte') : t('c_voir_liste')}
+                aria-label={panneauOuvert ? t('c_voir_carte') : t('c_voir_liste')}
+                onClick={() => setPanneauOuvert((v) => !v)}>
+          {panneauOuvert ? '🗺️' : '☰'}
+        </button>
         <div className="compteur-carte">
           {occupe ? t('charge') : <><b>{visibles.toLocaleString(langue === 'en' ? 'en-GB' : 'fr-FR')}</b> {t('c_structures_vis')}</>}
         </div>

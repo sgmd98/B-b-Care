@@ -92,7 +92,8 @@ export default function APropos() {
           {t('ap_sources_p')}
         </p>
         {s && (
-          <table className="t">
+                    <div className="table-scroll">
+<table className="t">
             <thead><tr><th>Module</th><th>Source</th><th>Licence</th></tr></thead>
             <tbody>
               {Object.entries(s).map(([cle, v]) => (
@@ -108,6 +109,7 @@ export default function APropos() {
               ))}
             </tbody>
           </table>
+          </div>
         )}
       </div>
 

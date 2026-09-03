@@ -177,7 +177,8 @@ export default function Soignant() {
             {lignes.length} {t('g_enfants_u')} · {total.doses} {t('g_doses_u')} · {total.bebes} {t('g_moins1')} ·
             {' '}{total.grands} {t('g_plus1')}
           </p>
-          <table className="sib-table">
+                    <div className="table-scroll">
+<table className="sib-table">
             <thead>
               <tr><th>{t('c_prenom')}</th><th>{t('v_age')}</th><th>{t('g_th_vaccins')}</th><th>Nutrition</th><th /></tr>
             </thead>
@@ -198,6 +199,7 @@ export default function Soignant() {
               ))}
             </tbody>
           </table>
+          </div>
           <div style={{ marginTop: 18, display: 'flex', gap: 10, flexWrap: 'wrap' }}>
             <button className="btn btn-primary" onClick={preparer} disabled={charge}>
               {charge ? t('n_calcul') : t('g_preparer')}

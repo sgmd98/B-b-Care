@@ -18,13 +18,13 @@ from pydantic import BaseModel, Field, field_validator
 from . import croissance as croiss
 from . import dhis2 as passerelle
 from . import donnees, triage as moteur_triage
-from . import bd, comptes, ia_triage
+from . import bd, comptes, ia_triage, pdf_vaccins
 from fastapi import Header
 from .pays_meta import CATEGORIES, DHIS2_NATIONAL, PAYS
 
 app = FastAPI(
     title="BébéCare API",
-    version="2.0",
+    version="2.14",
     description="Santé de l'enfant 0-5 ans : 15 pays de la CEDEAO. "
                 "Données OMS, OpenStreetMap et DHIS2.",
 )
@@ -81,7 +81,7 @@ def sante():
     return {
         "statut": "ok",
         "service": "bebecare",
-        "version": "2.1",
+        "version": "2.14",
         "pays_charges": len(donnees.pays_charges()),
         "structures_sante": donnees.total_lieux(),
         "base": bd.description(),
@@ -210,16 +210,16 @@ def calendrier(code: str):
     }
 
 
-@app.post("/api/vaccins/planning", tags=["vaccination"])
-def planning(n: Naissance):
-    cal = donnees.calendriers()["pays"].get(n.pays)
+def _calcul_planning(code_pays: str, naissance: date, deja_faits) -> dict:
+    """Calcul commun au planning JSON (page Vaccins) et au PDF telechargeable."""
+    cal = donnees.calendriers()["pays"].get(code_pays)
     if not cal:
         raise HTTPException(404, "calendrier indisponible pour ce pays")
     aujourd = date.today()
-    faits = set(n.deja_faits)
+    faits = set(deja_faits)
     etapes, en_retard, a_venir = [], 0, 0
     for d in cal["doses"]:
-        prevu = n.date_naissance + timedelta(days=d["jours"])
+        prevu = naissance + timedelta(days=d["jours"])
         cle = f"{d['vaccin']}|{d['dose']}"
         fait = cle in faits
         jours_ecart = (prevu - aujourd).days
@@ -238,9 +238,10 @@ def planning(n: Naissance):
             "age": d["age"], "date_prevue": prevu.isoformat(),
             "jours_restants": jours_ecart, "etat": etat,
         })
-    age_jours = (aujourd - n.date_naissance).days
+    age_jours = (aujourd - naissance).days
     return {
-        "pays": n.pays,
+        "pays": code_pays,
+        "date_naissance": naissance.isoformat(),
         "age_jours": age_jours,
         "age_mois": round(age_jours / 30.4375, 1),
         "resume": {"total": len(etapes), "faits": len(faits),
@@ -251,7 +252,13 @@ def planning(n: Naissance):
                     if en_retard else
                     "Le calendrier est à jour. Continuez ainsi."),
         "source": donnees.calendriers()["source"],
+        "genere_le": aujourd.isoformat(),
     }
+
+
+@app.post("/api/vaccins/planning", tags=["vaccination"])
+def planning(n: Naissance):
+    return _calcul_planning(n.pays, n.date_naissance, n.deja_faits)
 
 
 @app.get("/api/vaccins/ics", tags=["vaccination"])
@@ -280,6 +287,35 @@ def ics(pays: str, date_naissance: date):
     return Response("\r\n".join(lignes), media_type="text/calendar",
                     headers={"Content-Disposition":
                              f'attachment; filename="bebecare-{pays}.ics"'})
+
+
+@app.get("/api/vaccins/calendrier.pdf", tags=["vaccination"])
+def calendrier_pdf(pays: str, date_naissance: date,
+                   prenom: str = "", faits: str = "", langue: str = "fr"):
+    """Calendrier vaccinal personnalise en PDF.
+
+    Le PDF remplace le .ics comme document de reference pour les parents :
+    il s'ouvre sur tous les telephones, s'imprime au centre de sante et se
+    partage sur WhatsApp. `faits` : cles 'VACCIN|dose' separees par virgules.
+    """
+    from fastapi.responses import Response
+    if pays not in PAYS:
+        raise HTTPException(404, "pays inconnu")
+    if date_naissance > date.today():
+        raise HTTPException(422, "la date de naissance est dans le futur")
+
+    liste_faits = [f for f in faits.split(",") if f] if faits else []
+    plan = _calcul_planning(pays, date_naissance, liste_faits)
+
+    # Les cases "faites" n'ont de sens que pour les doses de ce pays.
+    meta = PAYS[pays]
+    nom_pays = meta["nom_en"] if langue == "en" else meta["nom"]
+    octets = pdf_vaccins.generer(nom_pays, plan, prenom, langue)
+    return Response(
+        octets, media_type="application/pdf",
+        headers={"Content-Disposition":
+                 f'attachment; filename="calendrier-vaccinal-'
+                 f'{pays}-{date_naissance.isoformat()}.pdf"'})
 
 
 # ---------------------------------------------------------------- NUTRITION
@@ -490,14 +526,24 @@ def assistant_question(q: QuestionLibre):
         q.question, q.pays, q.age_mois, q.historique)
 
     if res is None:
+        st = ia_triage.llm.statut()
+        if st.get("actif"):
+            # Cle presente mais fournisseur en panne : ne pas accuser l'usager.
+            message = ("Le service conversationnel est momentanement "
+                       "indisponible (incident chez le fournisseur d'IA). En "
+                       "attendant, utilisez l'onglet Triage : decrivez les "
+                       "symptomes et BebeCare applique l'algorithme PCIME de "
+                       "l'OMS, sans avoir besoin de l'IA.")
+        else:
+            message = ("Le mode conversation a besoin d'une cle d'API pour "
+                       "fonctionner. Sans elle, utilisez l'onglet Triage : "
+                       "decrivez les symptomes et BebeCare applique "
+                       "l'algorithme PCIME de l'OMS.")
         return {
             "disponible": False,
             "alerte": alerte,
-            "reponse": ("Le mode conversation a besoin d'une cle d'API pour "
-                        "fonctionner. Sans elle, utilisez l'assistant de triage : "
-                        "decrivez les symptomes et BebeCare applique l'algorithme "
-                        "PCIME de l'OMS."),
-            "statut_llm": ia_triage.llm.statut(),
+            "reponse": message,
+            "statut_llm": st,
         }
 
     return {
