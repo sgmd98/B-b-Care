@@ -15,8 +15,32 @@ function cleConseil(age) {
   return 'cn_24_59'
 }
 
-/* Un graphique de courbe OMS : couloirs -3/-2/mediane/+2 + le point de l'enfant */
+/* Le marqueur de l'enfant : point noir cercle de blanc, convention
+   des courbes de croissance OMS (comme sur le carnet de sante). */
+function PointEnfant(props) {
+  const { cx, cy } = props
+  if (cx == null || cy == null) return null
+  return (
+    <g>
+      <circle cx={cx} cy={cy} r={12} fill="#16232e" opacity={0.18} />
+      <circle cx={cx} cy={cy} r={7} fill="#16232e" stroke="#fff" strokeWidth={2.5} />
+    </g>
+  )
+}
+
+/* Un graphique de courbe OMS : couloirs -3/-2/mediane/+2 + le point de l'enfant.
+   Les deux axes sont NUMERIQUES : l'age de l'enfant (6,3 mois par ex.) n'est pas
+   forcement une valeur entiere de l'echelle, et le Scatter doit pouvoir le placer
+   exactement, sinon il retombe sur l'axe des abscisses. */
 function CourbeBloc({ titre, sousTitre, courbe, point, axeX, uniteY, t }) {
+  // Le domaine inclut toujours le point de l'enfant, meme hors des couloirs OMS.
+  const xs = courbe.map((r) => r.x)
+  const ys = courbe.flatMap((r) => [r.z3, r.p2].filter((v) => typeof v === 'number'))
+  if (point) { xs.push(point.x); ys.push(point.y) }
+  const xMin = Math.floor(Math.min(...xs))
+  const xMax = Math.ceil(Math.max(...xs))
+  const yMin = Math.max(0, Math.floor(Math.min(...ys) - 0.5))
+  const yMax = Math.ceil(Math.max(...ys) + 0.5)
   return (
     <Bouclier>
       <div className="bloc">
@@ -26,9 +50,10 @@ function CourbeBloc({ titre, sousTitre, courbe, point, axeX, uniteY, t }) {
           <ResponsiveContainer>
             <ComposedChart data={courbe} margin={{ top: 6, right: 12, bottom: 6, left: -8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#e6ecf0" />
-              <XAxis dataKey="x" tick={{ fontSize: 11 }}
+              <XAxis dataKey="x" type="number" domain={[xMin, xMax]} tickCount={10}
+                     tick={{ fontSize: 11 }}
                      label={{ value: axeX, position: 'insideBottom', offset: -3, fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} width={44}
+              <YAxis type="number" domain={[yMin, yMax]} tick={{ fontSize: 11 }} width={44}
                      label={{ value: uniteY, angle: -90, position: 'insideLeft', fontSize: 11 }} />
               <Tooltip contentStyle={{ fontSize: 12, borderRadius: 10 }} />
               <Legend wrapperStyle={{ fontSize: 11.5 }} />
@@ -36,7 +61,8 @@ function CourbeBloc({ titre, sousTitre, courbe, point, axeX, uniteY, t }) {
               <Line type="monotone" dataKey="z2" name={t('n_l2')} stroke="#f0872a" dot={false} strokeWidth={2} />
               <Line type="monotone" dataKey="med" name={t('n_lm')} stroke="#0f9d76" dot={false} strokeWidth={2} />
               <Line type="monotone" dataKey="p2" name={t('n_lp')} stroke="#2e6fb7" dot={false} strokeDasharray="4 4" />
-              {point && <Scatter data={[point]} dataKey="y" name={t('n_votre_enfant')} fill="#16232e" shape="star" />}
+              {point && <Scatter data={[point]} dataKey="y" name={t('n_votre_enfant')}
+                                 fill="#16232e" shape={<PointEnfant />} />}
             </ComposedChart>
           </ResponsiveContainer>
         </div>
