@@ -807,3 +807,9 @@ export const LEGAL = {
 /* Couples de libellés utilisés par la page légale et par la modale
    d'inscription, dans les deux langues. */
 export const ONGLETS_LEGAUX = ['confidentialite', 'conditions', 'mentions']
+
+/* Quatre points clés de la politique de confidentialité, à afficher là où
+   l'utilisateur donne son consentement. Un texte long n'est jamais lu : ces
+   quatre phrases disent l'essentiel, et le document complet reste à un clic. */
+export const POINTS_CONFIDENTIALITE = ['c_essentiel_1', 'c_essentiel_2',
+                                       'c_essentiel_3', 'c_essentiel_4']
