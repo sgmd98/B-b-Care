@@ -25,6 +25,11 @@ services:
       # Ecriture DHIS2 desactivee : BebeCare ne modifie aucune base sans accord.
       - key: BEBECARE_DHIS2_PUSH
         value: "0"
+      # Origines autorisees a appeler l'API depuis un navigateur.
+      # Le site et l'API partagent le meme domaine : cette liste reste donc
+      # fermee. Pour un apercu de developpement, ajouter l'adresse concernee.
+      - key: BEBECARE_ORIGINES
+        value: https://bebecare.onrender.com
       # Cle de signature des jetons de session : generee une fois par Render,
       # puis conservee -> les comptes restent connectes entre deux deploiements.
       - key: BEBECARE_SECRET
