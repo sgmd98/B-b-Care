@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../auth'
 import { useLangue } from '../i18n'
 import { telechargerJson } from '../api'
-import { VERSION_POLITIQUE } from '../legal'
+import { POINTS_CONFIDENTIALITE, VERSION_POLITIQUE } from '../legal'
 
 
 export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer, ouvrirLegal }) {
@@ -112,6 +112,16 @@ export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer, ouvrir
               <p style={{ fontSize: 11.5, color: 'var(--gris)', lineHeight: 1.55, margin: '0 0 14px' }}>
                 {t('c_pays_note')}
               </p>
+
+              {/* L'essentiel de la politique, affiché là où le consentement
+                  est donné : personne ne lit un document de douze sections
+                  avant de cocher une case. Le texte complet reste à un clic. */}
+              <details className="essentiel" open>
+                <summary>🔒 {t('c_essentiel')}</summary>
+                <ul>
+                  {POINTS_CONFIDENTIALITE.map((cle) => <li key={cle}>{t(cle)}</li>)}
+                </ul>
+              </details>
 
               {/* Consentement : case obligatoire, avec accès direct aux textes.
                   La version acceptée est transmise au serveur et horodatée. */}
@@ -289,6 +299,12 @@ export default function Compte({ listePays, ouvrirAuth, ouvrirLegal }) {
             ))}
           </div>
           <button className="bouton" onClick={ouvrirAuth}>{t('c_creer_mon_gratuit')}</button>
+          <div className="essentiel" style={{ textAlign: 'left', marginTop: 22 }}>
+            <b style={{ display: 'block', marginBottom: 8 }}>🔒 {t('c_essentiel')}</b>
+            <ul>
+              {POINTS_CONFIDENTIALITE.map((cle) => <li key={cle}>{t(cle)}</li>)}
+            </ul>
+          </div>
           <p style={{ marginTop: 18 }}>
             <button className="lien-texte" onClick={() => ouvrirLegal && ouvrirLegal('confidentialite')}>
               {t('c_lien_documents')}
