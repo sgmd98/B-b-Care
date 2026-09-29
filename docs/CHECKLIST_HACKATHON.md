@@ -13,7 +13,7 @@ Deadline : **2 octobre 2026 à 00 h 00 EDT**, soit **05 h 00 à Cotonou**.
 | **Students only** | **OK, confirmé.** Master 1 validé et inscrit en master de puériculture et pédiatrie, plus une 1re année en génie logiciel et intelligence artificielle, plus freeCodeCamp. Trois statuts d'étudiant en cours. |
 | Companies/professional organizations excluded | Tu participes en ton nom propre, pas au nom d'un employeur. OK |
 | Équipe de 1 à 4 | Tu es seul. OK |
-| **Rejoindre le Discord : obligatoire** | https://discord.gg/XgsX3f7JV — **à faire aujourd'hui** |
+| **Rejoindre le Discord : obligatoire** | https://discord.gg/XgsX3f7JV : **à faire aujourd'hui** |
 
 L'éligibilité est réglée. Si un organisateur demande une preuve, un certificat de
 scolarité ou une capture de ton tableau de bord de formation en ligne suffit.
@@ -38,7 +38,7 @@ marche**. Pas sur la beauté. Concentre ton énergie là-dessus.
 ### Les deux juges
 
 - **Jonathan Chang**, CTO de GatewayGS
-- **Yaokai Jiang**, fondateur et PDG de **Momen** — c'est lui qui jugera le
+- **Yaokai Jiang**, fondateur et PDG de **Momen** : c'est lui qui jugera le
   track no-code, et il ouvrira ton projet Momen
 
 ---
@@ -85,9 +85,9 @@ vidéo de 4 min 30 en viole une. Ce n'est pas un risque à prendre.
 
 Coche sur Devpost :
 
-1. **Best No-Code AI App built with Momen** — la page précise explicitement que
+1. **Best No-Code AI App built with Momen** : la page précise explicitement que
    ça ne t'enlève pas les autres prix
-2. **Track 1 : Accessibility & Health** — « democratize healthcare information »,
+2. **Track 1 : Accessibility & Health** : « democratize healthcare information »,
    c'est mot pour mot ta description
 
 ---
@@ -117,7 +117,7 @@ Coche sur Devpost :
 
 ## Ce qu'il reste
 
-1. Rejoindre le Discord — **obligatoire, à faire aujourd'hui**
+1. Rejoindre le Discord : **obligatoire, à faire aujourd'hui**
 2. Déployer sur Render
 3. Construire l'app Momen
 4. Tourner la vidéo
