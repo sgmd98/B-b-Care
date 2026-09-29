@@ -47,6 +47,19 @@ export function FournisseurAuth({ children }) {
     },
     async ajouterEnfant(e) { const r = await api.ajouterEnfant(jeton, e); await rechargerEnfants(); return r },
     async majEnfant(id, e) { const r = await api.majEnfant(jeton, id, e); await rechargerEnfants(); return r },
+    async changerMdp(ancien, nouveau) {
+      const r = await api.changerMdp(jeton, {
+        mot_de_passe_actuel: ancien, nouveau_mot_de_passe: nouveau,
+      })
+      deconnecter()          // le serveur invalide toutes les sessions ouvertes
+      return r
+    },
+    exporter() { return api.exporter(jeton) },
+    async supprimerCompte(motDePasse) {
+      const r = await api.supprimerCompte(jeton, motDePasse)
+      deconnecter()
+      return r
+    },
     async supprimerEnfant(id) { await api.supprimerEnfant(jeton, id); await rechargerEnfants() },
     rechargerEnfants,
   }), [jeton, utilisateur, enfants, pret, deconnecter, rechargerEnfants])

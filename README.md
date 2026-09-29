@@ -1,12 +1,13 @@
 <div align="center">
 
-<img src="web/public/logo.png" alt="BébéCare" width="110">
+<img src="web/public/logo-bebecare.png" alt="BébéCare" width="220">
 
 # BébéCare
 
-**Santé de l'enfant 0-5 ans, 15 pays de la CEDEAO.**
+**Site de référence en orientation pédiatrique pour les 15 pays de la CEDEAO.**
 Carte des soins, assistant IA de triage, carnet vaccinal officiel,
 dépistage de la malnutrition aux normes OMS et passerelle DHIS2.
+Documents légaux en clair, droits des personnes implémentés, accessibilité WCAG 2.2 AA visée.
 
 🇬🇧 **[Read this in English → README.en.md](README.en.md)**
 
@@ -195,15 +196,30 @@ python3 scripts/build_calendriers.py  # calendriers vaccinaux nationaux (OMS)
 Tous les pipelines sont **reproductibles** et n'utilisent que des sources
 ouvertes et citables.
 
-## Vie privée
+## Vie privée, sécurité et droits des personnes
 
-- Aucun traceur, aucune publicité, aucune revente de données.
+- Aucun traceur, aucune publicité, aucune revente de données, aucun cookie de mesure d'audience.
 - **Sans compte** : les données de l'enfant restent dans le `localStorage` du
   téléphone et ne quittent jamais l'appareil.
 - **Avec compte** : mot de passe haché en PBKDF2-HMAC-SHA256 (240 000 itérations),
-  jeton de session signé HMAC-SHA256 valable 30 jours. Aucune donnée de santé
-  n'est partagée avec un tiers.
+  jeton de session signé HMAC-SHA256 valable 30 jours, invalidé immédiatement
+  au changement de mot de passe ou à la suppression du compte.
+- **Consentement** : la politique de confidentialité et les conditions
+  d'utilisation sont acceptées explicitement à l'inscription. La version
+  acceptée et sa date sont enregistrées.
+- **Droits implémentés dans l'application** : export complet des données en un
+  clic (fichier JSON) et suppression réelle du compte, des enfants et des
+  mesures, sans copie conservée. Voir `/#confidentialite`.
+- **Sécurité** : en-têtes HTTP complets (politique de sécurité du contenu,
+  interdiction du détournement de cadre, permissions minimales), CORS fermé,
+  limitation de débit par adresse IP sur les routes sensibles, validation
+  stricte de chaque saisie. Détail complet : `docs/SECURITE.md`.
+- **Accessibilité** : lien d'évitement, focus visible, contrastes conformes,
+  titres hiérarchisés, zones tactiles de 44 px, respect de la réduction des
+  animations.
 - La géolocalisation n'est lue que sur appui explicite du bouton « Autour de moi ».
+- Les documents légaux sont exposés par l'API (`/api/legal`), pour qu'un tiers
+  puisse vérifier sans lire le code.
 
 ## Licences et attribution
 
@@ -244,4 +260,8 @@ d'aggravation, consultez immédiatement un soignant.
 | `docs/CHECKLIST_HACKATHON.md` | Règles, barème et pièges de GatewayHacks 2026 |
 | `docs/DEVPOST.md` | Trame de la page de soumission |
 | `docs/VIDEO.md` | Script de la vidéo de présentation |
+| `docs/SECURITE.md` | Diagnostic de sécurité, failles corrigées, conformité |
+| `ETAT-DES-LIEUX-BEBECARE.md` | État d'avancement des livrables, mis à jour à chaque jalon |
+| `scripts/verif_securite.py` | 52 contrôles de sécurité, à rejouer avant chaque déploiement |
+| `scripts/verif_postgres.py` | 16 contrôles du chemin PostgreSQL (Neon) |
 | `README.en.md` | Cette présentation, en anglais |

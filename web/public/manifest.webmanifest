@@ -1,0 +1,18 @@
+{
+  "name": "BébéCare : santé de l'enfant 0-5 ans, CEDEAO",
+  "short_name": "BébéCare",
+  "description": "Orientation pédiatrique de référence pour les 15 pays de la CEDEAO : carte des soins, vaccination, nutrition, triage PCIME.",
+  "lang": "fr",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f0f8f7",
+  "theme_color": "#00796b",
+  "categories": ["health", "medical", "education"],
+  "icons": [
+    { "src": "/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "/logo-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}

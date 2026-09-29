@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api'
+import { useAuth } from '../auth'
 import { useLangue } from '../i18n'
 
 /* Le mode soignant repond au vrai probleme de terrain : un agent de sante
@@ -14,6 +15,7 @@ const moisCourant = () => {
 
 export default function Soignant() {
   const { t } = useLangue()
+  const { jeton } = useAuth()
   const [formations, setFormations] = useState([])
   const [orgUnit, setOrgUnit] = useState('DiszpKrYNg8')
   const [periode, setPeriode] = useState(moisCourant())
@@ -77,7 +79,8 @@ export default function Soignant() {
   async function envoyer() {
     setCharge(true); setErreur(null)
     try {
-      setEnvoi(await api.dhis2SeanceEnvoyer({ org_unit: orgUnit, periode, consultations: lignes }))
+      setEnvoi(await api.dhis2SeanceEnvoyer(
+        { org_unit: orgUnit, periode, consultations: lignes }, jeton))
     } catch (e) { setErreur(String(e.message || e)) } finally { setCharge(false) }
   }
 

@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { useAuth } from '../auth'
 import { useLangue } from '../i18n'
+import { telechargerJson } from '../api'
+import { VERSION_POLITIQUE } from '../legal'
 
 
-export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer }) {
+export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer, ouvrirLegal }) {
   const { inscrire, connecter } = useAuth()
   const { t } = useLangue()
   const [mode, setMode] = useState('inscription')
@@ -11,14 +13,23 @@ export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer }) {
     identifiant: '', mot_de_passe: '', nom: '',
     pays: paysDefaut || 'bj', langue: langueDefaut || 'fr', role: 'parent',
   })
+  const [consentement, setConsentement] = useState(false)
   const [err, setErr] = useState(null)
   const [occupe, setOccupe] = useState(false)
 
   async function soumettre(e) {
-    e.preventDefault(); setErr(null); setOccupe(true)
+    e.preventDefault(); setErr(null)
+    if (mode === 'inscription' && !consentement) {
+      setErr(t('c_consentement_requis'))
+      return
+    }
+    setOccupe(true)
     try {
-      if (mode === 'inscription') await inscrire(f)
-      else await connecter(f.identifiant, f.mot_de_passe)
+      if (mode === 'inscription') {
+        await inscrire({ ...f, consentement: true, version_politique: VERSION_POLITIQUE })
+      } else {
+        await connecter(f.identifiant, f.mot_de_passe)
+      }
       fermer()
     } catch (e2) {
       const m = String(e2).match(/\{"detail":"(.*?)"\}/)
@@ -27,9 +38,16 @@ export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer }) {
     setOccupe(false)
   }
 
+  function allerAuxDocuments(e, cle) {
+    e.preventDefault()
+    fermer()
+    if (ouvrirLegal) ouvrirLegal(cle)
+  }
+
   return (
     <div className="voile-modale" onClick={(e) => e.target === e.currentTarget && fermer()}>
-      <div className="modale">
+      <div className="modale" role="dialog" aria-modal="true"
+           aria-label={mode === 'inscription' ? t('creer_compte') : t('c_connecter_titre')}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 18 }}>
           <img src="/logo-bebecare.png" alt="BébéCare" style={{ height: 46, width: 'auto' }} />
           <div>
@@ -38,6 +56,8 @@ export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer }) {
               {t('c_gratuit')}
             </p>
           </div>
+          <button type="button" className="modale-fermer" aria-label={t('fermer')}
+                  onClick={fermer}>✕</button>
         </div>
 
         <div className="bascule-modale">
@@ -92,6 +112,26 @@ export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer }) {
               <p style={{ fontSize: 11.5, color: 'var(--gris)', lineHeight: 1.55, margin: '0 0 14px' }}>
                 {t('c_pays_note')}
               </p>
+
+              {/* Consentement : case obligatoire, avec accès direct aux textes.
+                  La version acceptée est transmise au serveur et horodatée. */}
+              <div className="consentement">
+                <label className="consentement-case">
+                  <input type="checkbox" required checked={consentement}
+                         onChange={(e) => setConsentement(e.target.checked)} />
+                  <span>
+                    {t('c_consentement')}{' '}
+                    <a href="#confidentialite" onClick={(e) => allerAuxDocuments(e, 'confidentialite')}>
+                      {t('c_lire_politique')}
+                    </a>{' '}
+                    {t('c_et')}{' '}
+                    <a href="#conditions" onClick={(e) => allerAuxDocuments(e, 'conditions')}>
+                      {t('c_lire_conditions')}
+                    </a>.
+                  </span>
+                </label>
+                <p className="consentement-note">{t('c_consent_note')}</p>
+              </div>
             </>
           )}
 
@@ -113,7 +153,110 @@ export function ModaleAuth({ listePays, paysDefaut, langueDefaut, fermer }) {
   )
 }
 
-export default function Compte({ listePays, ouvrirAuth }) {
+
+/* --------------------------------------------- Mes donnees et mes droits */
+function MesDroits({ ouvrirLegal }) {
+  const { utilisateur, exporter, supprimerCompte, changerMdp } = useAuth()
+  const { t } = useLangue()
+  const [mdp, setMdp] = useState('')
+  const [ancien, setAncien] = useState('')
+  const [nouveau, setNouveau] = useState('')
+  const [confirmation, setConfirmation] = useState(false)
+  const [msg, setMsg] = useState(null)
+  const [err, setErr] = useState(null)
+  const [occupe, setOccupe] = useState(false)
+
+  async function faireExport() {
+    setErr(null); setMsg(null)
+    try {
+      const donnees = await exporter()
+      telechargerJson(donnees, `bebecare-mes-donnees-${new Date().toISOString().slice(0, 10)}.json`)
+      setMsg(t('c_exporter_ok'))
+    } catch (e) { setErr(String(e)) }
+  }
+
+  async function faireSuppression(e) {
+    e.preventDefault()
+    setErr(null); setMsg(null); setOccupe(true)
+    try { await supprimerCompte(mdp) } catch (e2) { setErr(String(e2)) }
+    setOccupe(false)
+  }
+
+  async function faireChangementMdp(e) {
+    e.preventDefault()
+    setErr(null); setMsg(null); setOccupe(true)
+    try {
+      await changerMdp(ancien, nouveau)
+      setMsg(t('c_mdp_change'))
+    } catch (e2) { setErr(String(e2)) }
+    setOccupe(false)
+  }
+
+  return (
+    <div className="bloc">
+      <h3>{t('c_mes_donnees')}</h3>
+      <p className="legende-txt">{t('c_mes_donnees_p')}</p>
+
+      {utilisateur?.consentement_version && (
+        <p className="legende-txt" style={{ fontSize: 12.5 }}>
+          {t('c_version_politique')} : <b>{utilisateur.consentement_version}</b>
+          {utilisateur.consentement_le && (
+            <> · {t('c_consentement_le')} {utilisateur.consentement_le.slice(0, 10)}</>
+          )}
+        </p>
+      )}
+
+      <div className="grille g2" style={{ alignItems: 'start' }}>
+        <div>
+          <button className="bouton sec" onClick={faireExport}>⬇️ {t('c_exporter')}</button>
+          <button className="bouton sec" style={{ marginTop: 10 }}
+                  onClick={() => ouvrirLegal && ouvrirLegal('confidentialite')}>
+            📄 {t('c_lien_documents')}
+          </button>
+        </div>
+
+        <form onSubmit={faireChangementMdp} className="cadre-form">
+          <h4>{t('c_changer_mdp')}</h4>
+          <label className="champ">
+            {t('c_mdp_actuel')}
+            <input required type="password" value={ancien} autoComplete="current-password"
+                   onChange={(e) => setAncien(e.target.value)} />
+          </label>
+          <label className="champ">
+            {t('c_nouveau_mdp')}
+            <input required type="password" minLength={8} value={nouveau} autoComplete="new-password"
+                   onChange={(e) => setNouveau(e.target.value)} />
+          </label>
+          <button className="bouton sec" disabled={occupe}>{t('c_changer_mdp')}</button>
+        </form>
+      </div>
+
+      <div className="zone-danger">
+        <h4>{t('c_supprimer_compte')}</h4>
+        <p>{t('c_supprimer_compte_avert')}</p>
+        {!confirmation ? (
+          <button className="bouton danger" onClick={() => setConfirmation(true)}>
+            {t('c_supprimer_compte')}
+          </button>
+        ) : (
+          <form onSubmit={faireSuppression} className="ligne-danger">
+            <input required type="password" value={mdp} autoComplete="current-password"
+                   placeholder={t('c_mdp_actuel')} onChange={(e) => setMdp(e.target.value)} />
+            <button className="bouton danger" disabled={occupe}>{t('c_supprimer_confirmer')}</button>
+            <button type="button" className="bouton sec"
+                    onClick={() => { setConfirmation(false); setMdp('') }}>{t('c_annuler')}</button>
+          </form>
+        )}
+      </div>
+
+      {msg && <div className="alerte vert" role="status"><p>{msg}</p></div>}
+      {err && <div className="alerte rouge" role="alert"><p>{err}</p></div>}
+    </div>
+  )
+}
+
+
+export default function Compte({ listePays, ouvrirAuth, ouvrirLegal }) {
   const { connecte, utilisateur, enfants, deconnecter, majProfil, ajouterEnfant, supprimerEnfant } = useAuth()
   const { t, langue } = useLangue()
   const [nouveau, setNouveau] = useState({ prenom: '', sexe: 'm', date_naissance: '' })
@@ -146,6 +289,11 @@ export default function Compte({ listePays, ouvrirAuth }) {
             ))}
           </div>
           <button className="bouton" onClick={ouvrirAuth}>{t('c_creer_mon_gratuit')}</button>
+          <p style={{ marginTop: 18 }}>
+            <button className="lien-texte" onClick={() => ouvrirLegal && ouvrirLegal('confidentialite')}>
+              {t('c_lien_documents')}
+            </button>
+          </p>
         </div>
       </div>
     )
@@ -232,8 +380,10 @@ export default function Compte({ listePays, ouvrirAuth }) {
           </label>
           <button className="bouton" style={{ marginBottom: 14 }}>{t('c_ajouter')}</button>
         </form>
-        {err && <div className="alerte rouge"><p>{err}</p></div>}
+        {err && <div className="alerte rouge" role="alert"><p>{err}</p></div>}
       </div>
+
+      <MesDroits ouvrirLegal={ouvrirLegal} />
     </div>
   )
 }

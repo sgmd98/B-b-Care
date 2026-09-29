@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { api } from '../api'
 import { useLangue } from '../i18n'
 
-export default function APropos() {
+export default function APropos({ ouvrirLegal }) {
   const { t, langue } = useLangue()
   const [s, setS] = useState(null)
   const [stats, setStats] = useState(null)
@@ -80,7 +80,7 @@ export default function APropos() {
             </div>
           </div>
           <div className="stat">
-            <div className="etiquette">Pharmacies</div>
+            <div className="etiquette">{t('ap_pharmacies')}</div>
             <div className="valeur">{nombre(stats.par_categorie.pharmacie || 0)}</div>
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function APropos() {
         {s && (
                     <div className="table-scroll">
 <table className="t">
-            <thead><tr><th>Module</th><th>Source</th><th>Licence</th></tr></thead>
+            <thead><tr><th scope="col">{t('ap_th_module')}</th><th scope="col">{t('ap_th_source')}</th><th scope="col">{t('ap_th_licence')}</th></tr></thead>
             <tbody>
               {Object.entries(s).map(([cle, v]) => (
                 <tr key={cle}>
@@ -121,6 +121,23 @@ export default function APropos() {
           <li>{t('ap_vp3')}</li>
           <li>{t('ap_vp4')}</li>
         </ul>
+      </div>
+
+      {/* ------------------------------------------------ DONNEES, DROITS */}
+      <div className="bloc" id="donnees-personnelles">
+        <h3>{t('ap_droits_h')}</h3>
+        <p className="legende-txt" style={{ fontSize: 14.5 }}>{t('ap_droits_p')}</p>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginTop: 6 }}>
+          <button className="btn btn-ghost btn-sm" onClick={() => ouvrirLegal && ouvrirLegal('confidentialite')}>
+            🔒 {t('ap_droits_lien')}
+          </button>
+          <button className="btn btn-ghost btn-sm" onClick={() => ouvrirLegal && ouvrirLegal('conditions')}>
+            📄 {t('pied_conditions')}
+          </button>
+          <button className="btn btn-ghost btn-sm" onClick={() => ouvrirLegal && ouvrirLegal('mentions')}>
+            ⚖️ {t('pied_mentions')}
+          </button>
+        </div>
       </div>
 
       <div className="alerte info">

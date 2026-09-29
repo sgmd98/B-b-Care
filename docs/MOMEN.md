@@ -1,4 +1,4 @@
-# Kit Momen — « BébéCare Terrain »
+# Kit Momen : « BébéCare Terrain »
 
 Ce document contient tout ce qu'il faut pour construire, **sans écrire une ligne
 de code**, l'application compagnon qui te qualifie pour le prix
@@ -118,7 +118,7 @@ Momen → onglet **API** → *New API* → *REST*.
 }
 ```
 
-**Réponse à mapper** — voici la structure réelle, vérifiée :
+**Réponse à mapper** : voici la structure réelle, vérifiée :
 
 ```json
 {

@@ -1,6 +1,6 @@
-# Page Devpost — brouillon prêt à copier
+# Page Devpost : brouillon prêt à copier
 
-> Titre : **BébéCare — la santé de l'enfant 0-5 ans, pour 15 pays d'un seul coup**
+> Titre : **BébéCare : la santé de l'enfant 0-5 ans, pour 15 pays d'un seul coup**
 > Tagline : *Every official child-health source for West Africa, in one free app that speaks DHIS2.*
 
 ---
@@ -10,13 +10,13 @@
 Je suis infirmier-puériculteur à Cotonou, au Bénin. Dans mon service, je vois
 chaque semaine la même scène : une mère arrive avec un enfant qui a maigri depuis
 deux mois, ou avec un carnet de vaccination où il manque trois doses. À chaque
-fois, l'information qui aurait évité ça existait déjà — elle était juste
+fois, l'information qui aurait évité ça existait déjà : elle était juste
 inaccessible.
 
 Le calendrier vaccinal officiel du Bénin ? Un PDF sur le site du ministère.
 Les normes de croissance de l'OMS ? Un tableur Excel de 1 857 lignes.
 La liste des centres de santé ? Nulle part, en pratique.
-Les taux de couverture ? Dans DHIS2, la base nationale — à laquelle aucune mère
+Les taux de couverture ? Dans DHIS2, la base nationale : à laquelle aucune mère
 n'aura jamais accès.
 
 Les chiffres OMS 2025 disent le résultat : au Bénin, seulement **49 %** des
@@ -28,28 +28,28 @@ et de ne pas la limiter à mon pays.
 
 ## Ce que fait BébéCare
 
-**🗺️ Une carte des soins pour 15 pays** — 23 568 structures de santé (hôpitaux,
+**🗺️ Une carte des soins pour 15 pays** : 23 568 structures de santé (hôpitaux,
 centres, maternités, pharmacies, laboratoires) dans les 15 pays de la CEDEAO,
 extraites d'OpenStreetMap. Un bouton « autour de moi » donne le centre le plus
 proche avec la distance et l'itinéraire.
 
-**💉 Un carnet vaccinal qui connaît le calendrier de votre pays** — pas un
+**💉 Un carnet vaccinal qui connaît le calendrier de votre pays** : pas un
 calendrier générique : le calendrier national officiel 2025 de chacun des 15 pays,
 issu du jeu de données OMS/UNICEF « Vaccine schedule ». On saisit la date de
 naissance, l'app calcule chaque rendez-vous, signale les retards et exporte tous
 les rappels vers l'agenda du téléphone.
 
-**⚖️ Un dépistage de la malnutrition aux vraies normes OMS** — z-scores
+**⚖️ Un dépistage de la malnutrition aux vraies normes OMS** : z-scores
 poids-pour-âge, taille-pour-âge et poids-pour-taille calculés avec les tables LMS
 officielles de l'OMS, plus le périmètre brachial aux seuils 115/125 mm. Ce sont
 exactement les indicateurs qu'utilisent les agents de santé communautaires.
 
-**🩺 Une orientation « que faire maintenant ? »** — un moteur qui applique la
+**🩺 Une orientation « que faire maintenant ? »** : un moteur qui applique la
 logique PCIME de l'OMS, l'algorithme officiel des centres de santé ouest-africains.
 Volontairement prudent : au moindre signe de danger, il envoie au centre de santé
 et affiche le numéro d'urgence du pays.
 
-**📊 Une passerelle DHIS2** — voir ci-dessous.
+**📊 Une passerelle DHIS2** : voir ci-dessous.
 
 ## Pourquoi DHIS2 rend ce projet sérieux
 
@@ -63,20 +63,59 @@ retards, erreurs.
 
 BébéCare fait les deux sens :
 
-1. **Lecture en direct** — les indicateurs de couverture (BCG, Pentavalent 1 et 3,
+1. **Lecture en direct** : les indicateurs de couverture (BCG, Pentavalent 1 et 3,
    rougeole, VPO 3) sont lus en temps réel par l'API `analytics` de DHIS2, district
    par district. Rien n'est en dur : changez de district dans l'app, la requête part.
-2. **Écriture conforme** — le carnet et le dépistage sont traduits en un document
+2. **Écriture conforme** : le carnet et le dépistage sont traduits en un document
    `dataValueSets` valide (bon `dataSet`, bonne période `AAAAMM`, bons
    `dataElement` et `categoryOptionCombo`), prêt à être poussé dans le SNIS.
 
 **Point important d'éthique** : BébéCare ne se connecte à **aucune base nationale
-de production** — ce sont des données de santé réelles, réservées aux ministères.
+de production** : ce sont des données de santé réelles, réservées aux ministères.
 La démonstration tourne sur l'instance publique officielle de DHIS2 (base
 Sierra Leone, données fictives). Et l'écriture est **désactivée par défaut** :
 l'app génère et valide le payload sans jamais modifier une base publique.
 Un ministère n'a que trois variables d'environnement à changer pour brancher
 BébéCare sur son propre DHIS2.
+
+## Pourquoi on peut s'y fier
+
+Un site de santé infantile ne vaut que par la confiance qu'il inspire. Trois
+choses ont été faites pour cela, et elles sont vérifiables.
+
+**1. Les documents légaux sont dans l'application, pas dans un PDF oublié.**
+Politique de confidentialité, conditions d'utilisation et mentions légales sont
+accessibles sur les pages `/#confidentialite`, `/#conditions` et `/#mentions`,
+en français et en anglais. Ils décrivent ce que le logiciel fait réellement :
+aucun cookie de mesure d'audience, aucune revente, aucune publicité, aucune
+donnée d'enfant envoyée à DHIS2. Ils sont versionnés et datés.
+
+**2. Le consentement est explicite et horodaté.** À l'inscription, la case est
+obligatoire et la version acceptée est enregistrée avec sa date. C'est la preuve
+du consentement, exigée pour des données de santé.
+
+**3. Les droits des personnes sont implémentés, pas seulement annoncés.**
+Depuis Mon espace : export complet des données en un clic (fichier JSON) et
+suppression réelle du compte, des enfants et des mesures, avec vérification du
+mot de passe et sans copie conservée.
+
+**4. Un diagnostic de sécurité complet a été mené et corrigé.** 13 failles
+identifiées et corrigées : traversée de répertoire dans le service des fichiers,
+absence de limitation de débit, CORS ouvert, jeton impossible à révoquer après un
+changement de mot de passe, secret de démonstration, en-têtes de sécurité
+absents. 68 contrôles automatiques passent (`scripts/verif_securite.py` et
+`scripts/verif_postgres.py`). Le détail est dans `docs/SECURITE.md`.
+
+**5. L'accessibilité est traitée comme une exigence, pas comme un supplément.**
+Lien d'évitement, focus visible, contrastes conformes AA, titres hiérarchisés,
+zones tactiles de 44 px, respect du réglage de réduction des animations. Une
+application de santé doit être utilisable par tout le monde, y compris sur un
+téléphone d'entrée de gamme et au clavier.
+
+**Et l'IA ?** Le modèle de langage ne décide jamais. Il comprend la phrase du
+parent et reformule les conseils. Le niveau d'urgence vient d'un arbre de
+décision PCIME de l'OMS, déterministe et lisible. Un modèle peut halluciner,
+un arbre de décision non.
 
 ## Comment c'est construit
 
@@ -93,16 +132,16 @@ BébéCare sur son propre DHIS2.
 - **Déploiement** : un seul service web sur Render, l'API sert le front compilé.
   Démarrage en moins d'une seconde, tient sur une instance gratuite.
 
-## Sources — aucun chiffre inventé
+## Sources : aucun chiffre inventé
 
 | Donnée | Source | Licence |
 |---|---|---|
 | Structures de santé | OpenStreetMap | ODbL 1.0 |
 | Calendriers vaccinaux | OMS/UNICEF, *Vaccine schedule* (WIISE) | Données ouvertes OMS |
-| Couverture vaccinale, mortalité | OMS GHO — estimations WUENIC 2025 | Données ouvertes OMS |
+| Couverture vaccinale, mortalité | OMS GHO : estimations WUENIC 2025 | Données ouvertes OMS |
 | Normes de croissance | WHO Child Growth Standards (tables LMS) | OMS |
 | Logique de triage | PCIME (OMS/UNICEF) | OMS |
-| Interopérabilité | DHIS2 — instance de démonstration publique | Données fictives |
+| Interopérabilité | DHIS2 : instance de démonstration publique | Données fictives |
 
 ## Les difficultés
 
@@ -118,7 +157,7 @@ pourquoi. Il a fallu explorer les métadonnées de l'instance pour trouver le bo
 le schéma avant tout envoi.
 
 **Les queues de z-scores.** La formule LMS brute donne des valeurs aberrantes
-au-delà de ±3 écarts-types — précisément la zone qui nous intéresse en malnutrition
+au-delà de ±3 écarts-types : précisément la zone qui nous intéresse en malnutrition
 sévère. J'ai implémenté l'ajustement officiel de l'OMS (méthode *igrowup*) pour que
 les cas graves soient classés correctement.
 
@@ -131,7 +170,7 @@ les cas graves soient classés correctement.
 
 ## La suite
 
-- Mode hors ligne complet (PWA) — décisif en zone rurale
+- Mode hors ligne complet (PWA) : décisif en zone rurale
 - Rappels vaccinaux par SMS et WhatsApp
 - Langues locales : fon, yoruba, wolof, haoussa
 - Conventions avec un ministère pilote pour activer l'écriture DHIS2 en vrai

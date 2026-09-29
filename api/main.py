@@ -6,6 +6,9 @@ from __future__ import annotations
 
 import os
 from datetime import date, timedelta
+from typing import Literal
+
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.exceptions import RequestValidationError
@@ -17,20 +20,46 @@ from pydantic import BaseModel, Field, field_validator
 
 from . import croissance as croiss
 from . import dhis2 as passerelle
-from . import donnees, triage as moteur_triage
+from . import donnees, securite, triage as moteur_triage
 from . import bd, comptes, ia_triage, pdf_vaccins
 from fastapi import Header
 from .pays_meta import CATEGORIES, DHIS2_NATIONAL, PAYS
 
+VERSION = "2.17"
+
+
+@asynccontextmanager
+async def cycle_de_vie(_app: FastAPI):
+    """Chargement des donnees et migration de la base au demarrage."""
+    donnees.charger()
+    comptes.initialiser()
+    yield
+
+
 app = FastAPI(
     title="BébéCare API",
-    version="2.16",
+    version=VERSION,
     description="Santé de l'enfant 0-5 ans : 15 pays de la CEDEAO. "
                 "Données OMS, OpenStreetMap et DHIS2.",
+    docs_url="/docs" if securite.documentation_ouverte() else None,
+    redoc_url=None,
+    openapi_url="/openapi.json" if securite.documentation_ouverte() else None,
+    lifespan=cycle_de_vie,
 )
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"],
-                   allow_headers=["*"])
+
+# CORS : le site et l'API partagent le meme domaine, donc aucune origine
+# etrangere n'est necessaire. La liste est reglable par BEBECARE_ORIGINES.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=securite.ORIGINES,
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+    allow_headers=["authorization", "content-type"],
+    max_age=600,
+)
 app.add_middleware(GZipMiddleware, minimum_size=1000)
+app.middleware("http")(securite.middleware_entetes)
+app.middleware("http")(securite.middleware_limites)
 
 
 # Noms lisibles des champs, pour les erreurs de saisie (jamais de JSON brut).
@@ -41,6 +70,10 @@ _CHAMPS_LISIBLES = {
     "question": "La question", "texte": "Le texte", "org_unit": "La formation sanitaire",
     "periode": "La période", "identifiant": "L'identifiant", "mot_de_passe": "Le mot de passe",
     "date_naissance": "La date de naissance", "prenom": "Le prénom",
+    "consentement": "Le consentement à la politique de confidentialité",
+    "version_politique": "La version de la politique", "nouveau_mot_de_passe": "Le nouveau mot de passe",
+    "mot_de_passe_actuel": "Le mot de passe actuel", "nom": "Le nom", "role": "Le profil",
+    "vaccins_faits": "La liste des vaccins", "date_mesure": "La date de la mesure",
 }
 
 
@@ -68,12 +101,6 @@ async def _erreurs_de_saisie(_requete, exc: RequestValidationError):
     return JSONResponse(status_code=422, content={"detail": " ".join(phrases)})
 
 
-@app.on_event("startup")
-def _demarrage():
-    donnees.charger()
-    comptes.initialiser()
-
-
 # ------------------------------------------------------------------ SANTE API
 
 @app.get("/api/sante", tags=["système"])
@@ -81,7 +108,7 @@ def sante():
     return {
         "statut": "ok",
         "service": "bebecare",
-        "version": "2.16",
+        "version": VERSION,
         "pays_charges": len(donnees.pays_charges()),
         "structures_sante": donnees.total_lieux(),
         "base": bd.description(),
@@ -264,6 +291,8 @@ def planning(n: Naissance):
 @app.get("/api/vaccins/ics", tags=["vaccination"])
 def ics(pays: str, date_naissance: date):
     """Calendrier iCalendar téléchargeable (rappels agenda du téléphone)."""
+    if pays not in PAYS or date_naissance > date.today():
+        raise HTTPException(404, "calendrier indisponible")
     cal = donnees.calendriers()["pays"].get(pays)
     if not cal:
         raise HTTPException(404, "calendrier indisponible")
@@ -291,7 +320,9 @@ def ics(pays: str, date_naissance: date):
 
 @app.get("/api/vaccins/calendrier.pdf", tags=["vaccination"])
 def calendrier_pdf(pays: str, date_naissance: date,
-                   prenom: str = "", faits: str = "", langue: str = "fr"):
+                   prenom: str = Query("", max_length=40),
+                   faits: str = Query("", max_length=2000),
+                   langue: Literal["fr", "en"] = "fr"):
     """Calendrier vaccinal personnalise en PDF.
 
     Le PDF remplace le .ics comme document de reference pour les parents :
@@ -484,8 +515,10 @@ def dhis2_seance(s: SeanceSoignant):
 
 
 @app.post("/api/dhis2/seance/envoyer", tags=["DHIS2"])
-def dhis2_seance_envoyer(s: SeanceSoignant):
+def dhis2_seance_envoyer(s: SeanceSoignant,
+                         authorization: str | None = Header(default=None)):
     """Envoi reel dans DHIS2 (bloque tant que BEBECARE_DHIS2_PUSH != 1)."""
+    _soignant(authorization)
     if not s.consultations:
         raise HTTPException(400, "aucune consultation dans la seance")
     res = passerelle.construire_payload_lot(
@@ -564,7 +597,9 @@ def assistant_statut():
 
 
 @app.post("/api/dhis2/push", tags=["DHIS2"])
-def dhis2_push(e: ExportDHIS2):
+def dhis2_push(e: ExportDHIS2, authorization: str | None = Header(default=None)):
+    """Envoi vers DHIS2 : compte soignant connecte, et activation explicite."""
+    _soignant(authorization)
     res = passerelle.construire_payload(
         e.org_unit, e.periode, e.vaccins, e.age_mois,
         {"code": e.nutrition_code} if e.nutrition_code else None)
@@ -576,66 +611,171 @@ def dhis2_push(e: ExportDHIS2):
 # sans inscription. Il sert a synchroniser le suivi entre appareils.
 
 def _uid(autorisation: str | None) -> int:
+    """Identifiant de l'utilisateur connecte, ou 401.
+
+    Trois verifications : signature du jeton, date d'expiration, et validite
+    apres un changement de mot de passe ou une suppression de compte.
+    """
     jeton = (autorisation or "").removeprefix("Bearer ").strip()
-    uid = comptes.lire_jeton(jeton)
-    if not uid:
+    charge = comptes.lire_jeton_complet(jeton)
+    if not charge or not comptes.jeton_encore_valide(charge):
         raise HTTPException(401, "session expirée ou invalide")
+    return charge["uid"]
+
+
+def _soignant(autorisation: str | None) -> int:
+    """Reserve l'ecriture DHIS2 aux comptes declares soignants."""
+    uid = _uid(autorisation)
+    p = comptes.profil(uid) or {}
+    if p.get("role") != "soignant":
+        raise HTTPException(403, "action réservée aux comptes soignants")
     return uid
 
 
 class Inscription(BaseModel):
-    identifiant: str
-    mot_de_passe: str
-    pays: str = "bj"
-    langue: str = "fr"
-    nom: str | None = None
-    role: str = "parent"
+    """Inscription. Toutes les valeurs sont bornees et fermees : le profil et
+    la langue ne peuvent prendre qu'une valeur connue, l'identifiant et le mot
+    de passe ont une taille maximale (protege PBKDF2 d'un deni de service)."""
+    identifiant: str = Field(min_length=5, max_length=190)
+    mot_de_passe: str = Field(min_length=8, max_length=200)
+    pays: str = Field(default="bj", min_length=2, max_length=2)
+    langue: Literal["fr", "en"] = "fr"
+    nom: str | None = Field(default=None, max_length=120)
+    role: Literal["parent", "soignant"] = "parent"
+    consentement: bool
+    version_politique: str = Field(min_length=1, max_length=40)
+
+    @field_validator("pays")
+    @classmethod
+    def _pays(cls, v: str) -> str:
+        v = v.strip().lower()
+        if v not in PAYS:
+            raise ValueError("pays inconnu")
+        return v
+
+    @field_validator("consentement")
+    @classmethod
+    def _consentement(cls, v: bool) -> bool:
+        if not v:
+            raise ValueError("le consentement est obligatoire")
+        return v
 
 
 class Connexion(BaseModel):
-    identifiant: str
-    mot_de_passe: str
+    identifiant: str = Field(min_length=1, max_length=190)
+    mot_de_passe: str = Field(min_length=1, max_length=200)
 
 
 class MajProfil(BaseModel):
-    nom: str | None = None
-    pays: str | None = None
-    langue: str | None = None
-    role: str | None = None
+    nom: str | None = Field(default=None, max_length=120)
+    pays: str | None = Field(default=None, max_length=2)
+    langue: Literal["fr", "en"] | None = None
+    role: Literal["parent", "soignant"] | None = None
+
+    @field_validator("pays")
+    @classmethod
+    def _pays(cls, v):
+        if v is None:
+            return None
+        v = v.strip().lower()
+        if v not in PAYS:
+            raise ValueError("pays inconnu")
+        return v
+
+
+class MotDePasse(BaseModel):
+    mot_de_passe_actuel: str = Field(min_length=1, max_length=200)
+    nouveau_mot_de_passe: str = Field(min_length=8, max_length=200)
+
+
+class SuppressionCompte(BaseModel):
+    mot_de_passe: str = Field(min_length=1, max_length=200)
+    confirmation: Literal["supprimer"] = "supprimer"
+
+
+def _date_plausible(d: date) -> date:
+    """Une date de naissance doit etre passee et posterieure a 1900."""
+    if d > date.today():
+        raise ValueError("la date ne peut pas être dans le futur")
+    if d.year < 1900:
+        raise ValueError("date trop ancienne")
+    return d
 
 
 class EnfantEntree(BaseModel):
-    prenom: str
+    prenom: str = Field(min_length=1, max_length=60)
     sexe: str = Field(default="m", pattern="^[mf]$")
     date_naissance: date
-    pays: str | None = None
+    pays: str | None = Field(default=None, max_length=2)
+
+    @field_validator("date_naissance")
+    @classmethod
+    def _dn(cls, v: date) -> date:
+        return _date_plausible(v)
+
+    @field_validator("pays")
+    @classmethod
+    def _pays(cls, v):
+        if v is None:
+            return None
+        v = v.strip().lower()
+        if v not in PAYS:
+            raise ValueError("pays inconnu")
+        return v
 
 
 class EnfantMaj(BaseModel):
-    prenom: str | None = None
-    sexe: str | None = None
+    prenom: str | None = Field(default=None, max_length=60)
+    sexe: str | None = Field(default=None, pattern="^[mf]$")
     date_naissance: date | None = None
-    pays: str | None = None
-    vaccins_faits: list[str] | None = None
+    pays: str | None = Field(default=None, max_length=2)
+    vaccins_faits: list[str] | None = Field(default=None, max_length=200)
+
+    @field_validator("date_naissance")
+    @classmethod
+    def _dn(cls, v):
+        return _date_plausible(v) if v else None
+
+    @field_validator("vaccins_faits")
+    @classmethod
+    def _vf(cls, v):
+        if v is None:
+            return None
+        propre = []
+        for cle in v:
+            if not isinstance(cle, str) or len(cle) > 40:
+                raise ValueError("clé de vaccin invalide")
+            propre.append(cle)
+        return propre
 
 
 class MesureEntree(BaseModel):
     date_mesure: date
-    age_mois: float
-    poids_kg: float | None = None
-    taille_cm: float | None = None
-    pb_mm: float | None = None
-    z_pa: float | None = None
-    z_ta: float | None = None
-    z_pt: float | None = None
-    verdict: str | None = None
+    age_mois: float = Field(ge=0, le=60)
+    poids_kg: float | None = Field(default=None, ge=0.4, le=40)
+    taille_cm: float | None = Field(default=None, ge=30, le=140)
+    pb_mm: float | None = Field(default=None, ge=60, le=300)
+    z_pa: float | None = Field(default=None, ge=-10, le=10)
+    z_ta: float | None = Field(default=None, ge=-10, le=10)
+    z_pt: float | None = Field(default=None, ge=-10, le=10)
+    verdict: str | None = Field(default=None, max_length=120)
+
+    @field_validator("date_mesure")
+    @classmethod
+    def _dm(cls, v: date) -> date:
+        return _date_plausible(v)
 
 
 @app.post("/api/compte/inscription", tags=["compte"])
 def inscription(e: Inscription):
+    """Cree un compte apres acceptation explicite de la politique.
+
+    La version acceptee et l'horodatage sont conserves : c'est la preuve du
+    consentement, exigee des qu'on traite des donnees de sante.
+    """
     try:
         return comptes.inscrire(e.identifiant, e.mot_de_passe, e.pays, e.langue,
-                                e.nom, e.role)
+                                e.nom, e.role, e.version_politique)
     except ValueError as err:
         raise HTTPException(400, str(err))
 
@@ -656,6 +796,37 @@ def moi(authorization: str | None = Header(default=None)):
 @app.patch("/api/compte/moi", tags=["compte"])
 def maj_profil(e: MajProfil, authorization: str | None = Header(default=None)):
     return comptes.modifier_profil(_uid(authorization), **e.model_dump())
+
+
+@app.post("/api/compte/mot-de-passe", tags=["compte"])
+def changer_mdp(e: MotDePasse, authorization: str | None = Header(default=None)):
+    """Change le mot de passe et deconnecte toutes les sessions ouvertes."""
+    try:
+        comptes.changer_mot_de_passe(_uid(authorization), e.mot_de_passe_actuel,
+                                     e.nouveau_mot_de_passe)
+    except ValueError as err:
+        raise HTTPException(400, str(err))
+    return {"modifie": True, "sessions_invalidees": True,
+            "message": "Mot de passe modifié. Reconnectez-vous avec le nouveau."}
+
+
+@app.get("/api/compte/export", tags=["compte"])
+def exporter_mes_donnees(authorization: str | None = Header(default=None)):
+    """Droit à la portabilité : toutes vos données, dans un fichier lisible."""
+    return comptes.exporter(_uid(authorization))
+
+
+@app.delete("/api/compte/moi", tags=["compte"])
+def supprimer_mon_compte(e: SuppressionCompte,
+                         authorization: str | None = Header(default=None)):
+    """Droit à l'effacement : supprime le compte, les enfants et les mesures."""
+    uid = _uid(authorization)
+    try:
+        comptes.supprimer_compte(uid, e.mot_de_passe)
+    except ValueError as err:
+        raise HTTPException(400, str(err))
+    return {"supprime": True,
+            "message": "Compte et données supprimés définitivement."}
 
 
 @app.get("/api/compte/enfants", tags=["compte"])
@@ -726,6 +897,74 @@ def assistant_analyse(q: QuestionIA):
     return ia_triage.analyser(q.texte)
 
 
+@app.get("/api/legal", tags=["système"])
+def informations_legales():
+    """Informations legales et de confidentialite, en clair et versionnees.
+
+    Exposees par l'API pour qu'un tiers (jury, autorite de protection des
+    donnees, integrateur) puisse verifier sans lire le code : qui edite le
+    site, quelles donnees sont traitees, combien de temps, et comment
+    exercer ses droits.
+    """
+    return {
+        "editeur": {
+            "nom": "SOSSA Gninazé Mingnissê Darius",
+            "qualite_fr": "Infirmier diplômé d'État, développeur web, "
+                          "étudiant en Master 1 Puériculture-Pédiatrie",
+            "qualite_en": "State-certified nurse, web developer and Master 1 "
+                          "student in Childcare and Pediatrics",
+            "ville": "Cotonou", "pays": "Bénin",
+            "contact": "sante.infantile.benin@gmail.com",
+        },
+        "hebergement": {"prestataire": "Render", "region": "Francfort",
+                        "pays": "Allemagne"},
+        "cadre": {
+            "benin": "Code du numérique de la République du Bénin "
+                     "(loi n° 2017-20), autorité de contrôle : APDP",
+            "international": "Principes du RGPD (minimisation, finalité, "
+                             "durée limitée, droits des personnes)",
+        },
+        "politique": {"version": securite.VERSION_POLITIQUE,
+                      "chemin": "/confidentialite"},
+        "conditions": {"version": securite.VERSION_POLITIQUE,
+                       "chemin": "/conditions"},
+        "donnees_collectees": [
+            "compte : identifiant, nom facultatif, pays, langue, profil",
+            "enfants : prénom, sexe, date de naissance",
+            "mesures : date, âge, poids, taille, périmètre brachial, z-scores",
+            "technique : adresse IP au moment de la requête, pour la sécurité",
+        ],
+        "jamais": [
+            "aucune revente de données",
+            "aucune publicité, aucun traceur publicitaire",
+            "aucun cookie de mesure d'audience",
+            "aucune donnée envoyée à un assureur ou à un employeur",
+        ],
+        "droits": ["accès", "rectification", "effacement", "portabilité",
+                   "opposition", "retrait du consentement"],
+        "comment": "Dans Mon espace : exporter mes données, supprimer mon "
+                   "compte. Sinon par email à sante.infantile.benin@gmail.com "
+                   "(réponse sous 30 jours).",
+        "conservation": "Tant que le compte existe, puis suppression "
+                        "définitive. Le suivi est effacé immédiatement si "
+                        "l'utilisateur supprime son compte.",
+        "assistant_ia": {
+            "role": "compréhension du langage et reformulation seulement",
+            "decision": "l'algorithme PCIME (OMS) décide, jamais le modèle",
+            "donnees_envoyees": "le texte de la question et l'âge, jamais le "
+                                "nom ni l'identifiant du compte",
+        },
+    }
+
+
+@app.get("/api/legal/version", tags=["système"], include_in_schema=False)
+def version_politique():
+    """Version courante des documents legaux (utilisee a l'inscription)."""
+    return {"version": securite.VERSION_POLITIQUE,
+            "confidentialite": "/confidentialite",
+            "conditions": "/conditions"}
+
+
 @app.get("/api/sources", tags=["système"])
 def sources():
     return {
@@ -762,14 +1001,44 @@ def sources():
 
 # ----------------------------------------------------------- FRONT STATIQUE
 
-DIST = os.path.join(os.path.dirname(__file__), "..", "web", "dist")
+DIST = os.path.abspath(os.path.join(os.path.dirname(__file__), "..",
+                                      "web", "dist"))
 if os.path.isdir(DIST):
     app.mount("/assets", StaticFiles(directory=os.path.join(DIST, "assets")),
               name="assets")
 
+    def _fichier_du_site(chemin: str) -> str | None:
+        """Chemin absolu d'un fichier du site, ou None.
+
+        SECURITE : sans ce controle, une requete du type
+        /..%2F..%2Fapi%2Fbd.py ferait sortir du dossier web/dist et servirait
+        le code source. On resout le chemin reel puis on verifie qu'il reste
+        bien a l'interieur de dist.
+        """
+        if not chemin:
+            return None
+        candidat = os.path.realpath(os.path.join(DIST, chemin))
+        if candidat != DIST and not candidat.startswith(DIST + os.sep):
+            return None
+        return candidat if os.path.isfile(candidat) else None
+
+    # Routes qui ne doivent JAMAIS renvoyer la page du site : sans cette
+    # liste, une adresse /api/inexistante repondrait 200 avec du HTML, ce qui
+    # masque les erreurs et trompe les clients de l'API.
+    CHEMINS_RESERVES = {"docs", "redoc", "openapi.json"}
+
     @app.get("/{chemin:path}", include_in_schema=False)
     def spa(chemin: str):
-        f = os.path.join(DIST, chemin)
-        if chemin and os.path.isfile(f):
-            return FileResponse(f)
+        if chemin.startswith("api/") or chemin in CHEMINS_RESERVES:
+            raise HTTPException(404, "ressource introuvable")
+        fichier = _fichier_du_site(chemin)
+        if fichier:
+            return FileResponse(fichier)
         return FileResponse(os.path.join(DIST, "index.html"))
+else:
+    @app.get("/{chemin:path}", include_in_schema=False)
+    def spa_absente(chemin: str):
+        """Sans dossier web/dist (mode API seule), l'API ne sert pas de page."""
+        if chemin.startswith("api/") or chemin in {"docs", "redoc", "openapi.json"}:
+            raise HTTPException(404, "ressource introuvable")
+        raise HTTPException(404, "interface web non construite")

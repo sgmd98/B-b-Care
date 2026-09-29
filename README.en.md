@@ -169,15 +169,27 @@ python3 scripts/build_calendriers.py  # national immunisation schedules (WHO)
 
 Every pipeline is **reproducible** and uses only open, citable sources.
 
-## Privacy
+## Privacy, security and data subject rights
 
-- No trackers, no ads, no data resale.
-- **Without an account**: the child's data stays in the phone's `localStorage`
-  and never leaves the device.
-- **With an account**: passwords hashed with PBKDF2-HMAC-SHA256 (240,000
-  iterations), session token signed with HMAC-SHA256, valid 30 days. No health
-  data is shared with any third party.
-- Geolocation is only read when the user explicitly taps "Near me".
+- No tracker, no advertising, no data resale, no analytics cookie.
+- **Without an account**: the child data stays in the phone `localStorage` and
+  never leaves the device.
+- **With an account**: password hashed with PBKDF2-HMAC-SHA256 (240,000
+  iterations), session token signed with HMAC-SHA256, valid 30 days and
+  invalidated as soon as the password changes or the account is deleted.
+- **Consent**: the privacy policy and the terms of use are explicitly accepted
+  at sign-up. The accepted version and its date are recorded.
+- **Rights implemented in the application**: full data export in one click
+  (JSON file) and real deletion of the account, children and measurements,
+  with no copy kept. See `/#confidentialite`.
+- **Security**: full HTTP headers (content security policy, frame protection,
+  minimal permissions), closed CORS, per-IP rate limiting on sensitive routes,
+  strict validation of every input. Full detail: `docs/SECURITE.md`.
+- **Accessibility**: skip link, visible focus, compliant contrast, ordered
+  headings, 44 px touch targets, reduced motion respected.
+- Geolocation is read only when the "Around me" button is pressed explicitly.
+- The legal documents are exposed by the API (`/api/legal`) so a third party can
+  verify without reading the code.
 
 ## Licences and attribution
 

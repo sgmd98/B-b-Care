@@ -38,6 +38,7 @@ export default function Carte({ pays, listePays, categories }) {
   const [requete, setRequete] = useState('')
   const [resultats, setResultats] = useState(null)
   const [occupe, setOccupe] = useState(false)
+  const [souciCarte, setSouciCarte] = useState(null)
   const [panneauOuvert, setPanneauOuvert] = useState(true)
 
   const couleurs = useMemo(() => {
@@ -143,10 +144,18 @@ export default function Carte({ pays, listePays, categories }) {
     carte.addControl(new maplibregl.ScaleControl({ unit: 'metric' }), 'bottom-right')
     carte.addControl(new maplibregl.AttributionControl({
       compact: true,
-      customAttribution: '© OpenStreetMap · OpenFreeMap',
+      customAttribution: t('c_attribution'),
     }), 'bottom-right')
     carte.on('load', poserCouches)
     carte.on('moveend', rafraichir)
+    // Si les tuiles ne chargent pas (reseau coupe, mode avion), l'utilisateur
+    // doit le savoir : sans message, il croit que la carte est vide.
+    carte.on('error', (e) => {
+      const message = String(e?.error?.message || '')
+      if (message.includes('style') || message.includes('tile') || message.includes('Failed')) {
+        setSouciCarte(t('c_carte_souci'))
+      }
+    })
     refCarte.current = carte
     return () => { carte.remove(); refCarte.current = null; refCharge.current = false }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -155,7 +164,12 @@ export default function Carte({ pays, listePays, categories }) {
   /* ------------------------------------------------ changement de fond */
   useEffect(() => {
     const carte = refCarte.current
-    if (!carte || !refCharge.current) return
+    if (!carte) return
+    if (!refCharge.current) {
+      // Le fond a change avant la fin du chargement : la couche de donnees
+      // n'existe pas encore, elle sera posee par l'evenement 'load'.
+      return
+    }
     refCharge.current = false
     carte.setStyle(FONDS[fond].style)
     carte.once('styledata', () => { poserCouches() })
@@ -318,6 +332,8 @@ export default function Carte({ pays, listePays, categories }) {
       </aside>
 
       <div className="leaflet-wrap">
+        {/* Titre de page pour les lecteurs d'ecran : la carte occupe tout l'ecran */}
+        <h1 className="sr-only">{t('t_carte')}</h1>
         <div ref={refDiv} style={{ height: '100%', width: '100%' }} />
         <button type="button" className="btn-panneau"
                 title={panneauOuvert ? t('c_voir_carte') : t('c_voir_liste')}
@@ -325,7 +341,10 @@ export default function Carte({ pays, listePays, categories }) {
                 onClick={() => setPanneauOuvert((v) => !v)}>
           {panneauOuvert ? '🗺️' : '☰'}
         </button>
-        <div className="compteur-carte">
+        {souciCarte && (
+          <div className="carte-souci" role="status">{souciCarte}</div>
+        )}
+        <div className="compteur-carte" aria-live="polite">
           {occupe ? t('charge') : <><b>{visibles.toLocaleString(langue === 'en' ? 'en-GB' : 'fr-FR')}</b> {t('c_structures_vis')}</>}
         </div>
         <div className="outils-carte">

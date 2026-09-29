@@ -16,26 +16,28 @@ Ordre à respecter :
 
 ## Étape 1 : installer et vérifier en local
 
-### 1.1 Décompresser
+### 1.1 Récupérer le dépôt
 
-Le fichier `bebecare-v2.10.zip` est dans **Téléchargements**.
-
-```bash
-cd ~/Téléchargements
-unzip -o bebecare-v2.10.zip
-```
-
-Tu as déjà un dossier `~/bebecare` de la version précédente. On le remplace en
-gardant une sauvegarde :
+Le dépôt fait référence : aucune archive à décompresser.
 
 ```bash
-cd ~
-mv bebecare bebecare-sauvegarde-$(date +%Y%m%d-%H%M)
-mv ~/Téléchargements/bebecare ~/bebecare
-cd ~/bebecare
+git clone https://github.com/sgmd98/B-b-Care.git
+cd B-b-Care
 ```
 
-### 1.2 Lancer l'API — terminal 1
+Pour repartir d'une copie propre quand des fichiers locaux ont été modifiés :
+
+```bash
+git status              # voir ce qui a changé
+git add -A              # tout prendre
+git commit -m "v2.17 : securite, documents legaux, accessibilite"
+git pull --rebase       # aligner sur le depot
+```
+
+En cas de doute sur une modification locale non voulue, `git restore <fichier>`
+ramène la version du dépôt, sans supprimer aucun dossier du projet.
+
+### 1.2 Lancer l'API : terminal 1
 
 ```bash
 cd ~/bebecare
@@ -47,7 +49,7 @@ uvicorn api.main:app --reload --port 8000
 
 Laisse ce terminal ouvert. Il ne rend jamais la main, c'est normal.
 
-### 1.3 Lancer le site — terminal 2
+### 1.3 Lancer le site : terminal 2
 
 Ouvre un nouvel onglet avec **Ctrl+Shift+T**.
 
@@ -59,7 +61,7 @@ npm run dev
 
 Ouvre **http://localhost:5173**.
 
-### 1.4 Vérifier — terminal 3
+### 1.4 Vérifier : terminal 3
 
 ```bash
 curl http://localhost:8000/api/sante
@@ -86,7 +88,7 @@ les comptes créés disparaîtraient. Neon est du PostgreSQL gratuit et permanen
 2. *Create project* :
    - **Name** : `bebecare`
    - **Postgres version** : la version proposée par défaut
-   - **Region** : `Europe (Frankfurt)` — la même que Render, pour la latence
+   - **Region** : `Europe (Frankfurt)` : la même que Render, pour la latence
 3. À la création, Neon affiche la **Connection string**. Clique *Copy*.
 
 Elle ressemble à ceci :
@@ -149,7 +151,7 @@ print('Conseil :', r['decision']['conseils'][0][:90])
 "
 ```
 
-Si `LLM : True`, l'étage IA fonctionne. Si `False`, vérifie la clé — mais le site
+Si `LLM : True`, l'étage IA fonctionne. Si `False`, vérifie la clé : mais le site
 marche quand même, il retombe sur le moteur local.
 
 > **Alternative Gemini** : clé sur https://aistudio.google.com/apikey, puis
@@ -159,10 +161,10 @@ marche quand même, il retombe sur le moteur local.
 
 ## Étape 4 : GitHub
 
-Ton dépôt existe déjà : **https://github.com/sgmd98/B-b-Care**. Il contient la
-v0.1 (dossier `front/`, 4 pays). On y pousse la v2.10, qui a une structure
-différente (dossier `web/`, 15 pays). Il faut donc **remplacer** le contenu, pas
-l'empiler.
+Le dépôt de référence est **https://github.com/sgmd98/B-b-Care**. La branche
+`main` est la seule branche déployée par Render : c'est donc elle qui doit
+porter la version en ligne. Le dépôt a connu une v0.1 (dossier `front/`, 4 pays)
+remplacée depuis par la structure actuelle (dossier `web/`, 15 pays).
 
 > Au passage : le nom `B-b-Care` vient d'une conversion automatique des accents
 > par GitHub. Tu peux le renommer proprement en `bebecare` dans
@@ -181,22 +183,17 @@ git remote add origin https://github.com/sgmd98/B-b-Care.git
 git fetch origin
 ```
 
-### 4.2 Écraser proprement l'ancienne version
-
-Cette commande place ton nouveau code par-dessus l'historique existant. Le
-commit v0.1 reste dans l'historique, mais l'arborescence devient celle de la
-v2.10 : l'ancien dossier `front/` disparaît.
+### 4.2 Envoyer la nouvelle version
 
 ```bash
-git checkout -b main
 git add -A
-git commit -m "v2.10 : 15 pays CEDEAO, IA hybride 3 etages, mode soignant DHIS2, Neon"
-git merge origin/main --allow-unrelated-histories -X ours -m "Remplacement de la v0.1 par la v2.10"
-git push -u origin main
+git commit -m "v2.17 : securite, documents legaux, accessibilite"
+git push origin main
 ```
 
-Si Git ouvre un éditeur de message pendant le `merge`, appuie sur
-**Ctrl+X** (nano) ou tape **:wq** puis Entrée (vim).
+Si le travail a été fait sur une branche (par exemple une branche d'agent),
+ouvrir une pull request vers `main` puis la fusionner : Render ne redéploie que
+la branche `main`. Après fusion, compter 3 à 5 minutes de construction.
 
 > **Si GitHub refuse ton mot de passe** : c'est normal, ils ne les acceptent plus.
 > Va dans *Settings → Developer settings → Personal access tokens → Tokens
@@ -311,13 +308,24 @@ moment-là, il voit une page blanche et il s'en va.
 ## Mettre à jour ensuite
 
 ```bash
-cd ~/bebecare
 git add -A
 git commit -m "description de la correction"
-git push
+git push origin main
 ```
 
 Render redéploie tout seul en 3 à 5 minutes.
+
+### Contrôle avant chaque envoi
+
+```bash
+cd web && npm ci && npm run build && cd ..
+python3 -m venv /tmp/venv && /tmp/venv/bin/pip install -r api/requirements.txt httpx
+/tmp/venv/bin/python scripts/verif_securite.py     # 52 controles
+/tmp/venv/bin/python scripts/verif_postgres.py     # 16 controles
+```
+
+Les deux scripts sortent en erreur si un contrôle échoue : dans ce cas, ne pas
+pousser.
 
 ---
 
@@ -330,6 +338,11 @@ Render redéploie tout seul en 3 à 5 minutes.
 | Erreur `SSL required` au démarrage | `?sslmode=require` manquant | Le rajouter à la fin de la chaîne Neon |
 | `"actif": false` sur `/api/assistant/statut` | Clé Groq absente ou invalide | Régénérer la clé, la recoller dans Render |
 | Assistant lent (3 s et plus) | Réveil du service, ou latence LLM | Normal au réveil. Sinon baisser `BEBECARE_LLM_DELAI` |
+| `/docs` répond 404 | Comportement voulu depuis la v2.17 | Ouvrir la documentation avec `BEBECARE_DOCS=1` si nécessaire |
+| Message « Trop de tentatives » | Limiteur de débit (12 connexions par 15 min) | Attendre, ou ajuster les quotas dans `api/securite.py` |
+| Sessions perdues après redéploiement | `BEBECARE_SECRET` absente : un secret aléatoire est généré à chaque démarrage | Vérifier que la variable existe dans Render, valeur `generateValue: true` |
+| Les envois DHIS2 répondent 403 | Compte connecté non déclaré soignant | Créer un compte avec le profil soignant, ou repasser le rôle dans Mon espace |
+| Aperçu dans un cadre refusé | `frame-ancestors` limite l'imbrication | Ajouter le domaine dans `BEBECARE_CSP_FRAME` |
 | Page blanche au premier chargement | Service endormi | Attendre 50 s, puis mettre UptimeRobot en place |
 
 ---
