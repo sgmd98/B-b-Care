@@ -37,6 +37,19 @@ async function req(chemin, options) {
   return r.json()
 }
 
+/* Telecharge un objet JSON fourni par l'API (export des donnees). */
+export function telechargerJson(objet, nomFichier) {
+  const contenu = JSON.stringify(objet, null, 2)
+  const url = URL.createObjectURL(new Blob([contenu], { type: 'application/json' }))
+  const a = document.createElement('a')
+  a.href = url
+  a.download = nomFichier
+  document.body.appendChild(a)
+  a.click()
+  a.remove()
+  URL.revokeObjectURL(url)
+}
+
 export const api = {
   sante: () => req('/api/sante'),
   pays: () => req('/api/pays'),
@@ -133,6 +146,18 @@ export const api = {
   mesures: (j, id) => req(`/api/compte/enfants/${id}/mesures`, {
     headers: { authorization: `Bearer ${j}` },
   }),
+  changerMdp: (j, c) => req('/api/compte/mot-de-passe', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', authorization: `Bearer ${j}` },
+    body: JSON.stringify(c),
+  }),
+  exporter: (j) => req('/api/compte/export', { headers: { authorization: `Bearer ${j}` } }),
+  supprimerCompte: (j, mot_de_passe) => req('/api/compte/moi', {
+    method: 'DELETE',
+    headers: { 'content-type': 'application/json', authorization: `Bearer ${j}` },
+    body: JSON.stringify({ mot_de_passe, confirmation: 'supprimer' }),
+  }),
+  legal: () => req('/api/legal'),
 
   // ------------------------------------------------------- assistant IA
   assistant: (c) => req('/api/assistant', {
@@ -147,8 +172,11 @@ export const api = {
     method: 'POST', headers: { 'content-type': 'application/json' },
     body: JSON.stringify(c),
   }),
-  dhis2SeanceEnvoyer: (c) => req('/api/dhis2/seance/envoyer', {
-    method: 'POST', headers: { 'content-type': 'application/json' },
+  dhis2SeanceEnvoyer: (c, jeton) => req('/api/dhis2/seance/envoyer', {
+    method: 'POST',
+    headers: jeton
+      ? { 'content-type': 'application/json', authorization: `Bearer ${jeton}` }
+      : { 'content-type': 'application/json' },
     body: JSON.stringify(c),
   }),
   assistantQuestion: (c) => req('/api/assistant/question', {

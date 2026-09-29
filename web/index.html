@@ -2,13 +2,105 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover" />
     <meta name="theme-color" content="#0f9d76" />
-    <meta name="description" content="BébéCare : santé de l'enfant 0-5 ans dans les 15 pays de la CEDEAO : carte des centres de santé, calendrier vaccinal officiel, dépistage de la malnutrition (normes OMS) et interopérabilité DHIS2." />
-    <title>BébéCare : santé de l'enfant 0-5 ans · CEDEAO</title>
+    <meta name="color-scheme" content="light" />
+
+    <title>BébéCare : santé de l'enfant 0-5 ans, 15 pays de la CEDEAO</title>
+    <meta name="description" content="Site de référence en orientation pédiatrique pour la CEDEAO : carte des structures de santé, calendrier vaccinal officiel, dépistage de la malnutrition aux normes OMS (z-scores) et triage des signes de danger selon l'algorithme PCIME. Par SOSSA Gninazé Mingnissê Darius, infirmier diplômé d'État." />
+    <meta name="author" content="SOSSA Gninazé Mingnissê Darius" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="keywords" content="santé de l'enfant, pédiatrie, CEDEAO, vaccination, calendrier vaccinal, malnutrition, OMS, PCIME, DHIS2, Bénin, Afrique de l'Ouest" />
+    <link rel="canonical" href="https://bebecare.onrender.com/" />
+
+    <!-- Partage sur les réseaux et les messageries -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BébéCare" />
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:locale:alternate" content="en_GB" />
+    <meta property="og:title" content="BébéCare : santé de l'enfant 0-5 ans, 15 pays de la CEDEAO" />
+    <meta property="og:description" content="Carte des structures de santé, calendrier vaccinal officiel, dépistage de la malnutrition aux normes OMS et triage PCIME des signes de danger, dans les 15 pays de la CEDEAO." />
+    <meta property="og:url" content="https://bebecare.onrender.com/" />
+    <meta property="og:image" content="https://bebecare.onrender.com/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="BébéCare, santé de l'enfant 0-5 ans dans les 15 pays de la CEDEAO" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BébéCare : santé de l'enfant 0-5 ans, CEDEAO" />
+    <meta name="twitter:description" content="Orientation pédiatrique de référence en Afrique de l'Ouest : carte, vaccination, nutrition, triage PCIME." />
+    <meta name="twitter:image" content="https://bebecare.onrender.com/og-image.jpg" />
+
+    <!-- Icônes -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preload" as="image" href="/logo-bebecare.png" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "WebSite",
+          "@id": "https://bebecare.onrender.com/#site",
+          "url": "https://bebecare.onrender.com/",
+          "name": "BébéCare",
+          "inLanguage": ["fr", "en"],
+          "description": "Orientation pédiatrique de référence pour les 15 pays de la CEDEAO : carte des soins, vaccination, nutrition, triage PCIME.",
+          "publisher": { "@id": "https://bebecare.onrender.com/#auteur" }
+        },
+        {
+          "@type": "WebApplication",
+          "@id": "https://bebecare.onrender.com/#application",
+          "name": "BébéCare",
+          "url": "https://bebecare.onrender.com/",
+          "applicationCategory": "HealthApplication",
+          "operatingSystem": "Web, Android, iOS",
+          "inLanguage": ["fr", "en"],
+          "isAccessibleForFree": true,
+          "areaServed": "CEDEAO (15 pays d'Afrique de l'Ouest)",
+          "about": "Santé de l'enfant de 0 à 5 ans, vaccination, croissance, malnutrition",
+          "featureList": [
+            "Carte des structures de santé (données OpenStreetMap)",
+            "Calendrier vaccinal officiel par pays et PDF personnalisé",
+            "Dépistage de la malnutrition aux normes OMS (z-scores)",
+            "Triage des signes de danger selon l'algorithme PCIME",
+            "Passerelle de démonstration vers DHIS2",
+            "Documents légaux : politique de confidentialité et conditions d'utilisation"
+          ],
+          "author": { "@id": "https://bebecare.onrender.com/#auteur" },
+          "license": "https://bebecare.onrender.com/#mentions",
+          "usageInfo": "Outil d'information et d'orientation. Ne pose aucun diagnostic et ne remplace pas un professionnel de santé."
+        },
+        {
+          "@type": "Person",
+          "@id": "https://bebecare.onrender.com/#auteur",
+          "name": "SOSSA Gninazé Mingnissê Darius",
+          "jobTitle": "Infirmier diplômé d'État, développeur web",
+          "description": "Infirmier diplômé d'État, développeur web et étudiant en Master 1 Puériculture-Pédiatrie.",
+          "address": { "@type": "PostalAddress", "addressLocality": "Cotonou", "addressCountry": "BJ" },
+          "knowsLanguage": ["fr", "en"],
+          "url": "https://www.linkedin.com/in/gninaz%C3%A9-mingniss%C3%AA-darius-sossa-743721376",
+          "sameAs": [
+            "https://github.com/sgmd98",
+            "https://www.linkedin.com/in/gninaz%C3%A9-mingniss%C3%AA-darius-sossa-743721376"
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <p style="font-family: system-ui, sans-serif; padding: 24px; line-height: 1.6">
+        BébéCare, santé de l'enfant de 0 à 5 ans dans les 15 pays de la CEDEAO :
+        carte des structures de santé, calendrier vaccinal officiel, dépistage de la
+        malnutrition selon les normes de l'OMS et triage des signes de danger selon
+        l'algorithme PCIME. Cette application a besoin de JavaScript pour s'afficher.
+      </p>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

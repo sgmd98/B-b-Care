@@ -55,7 +55,7 @@ export default function Accueil({ pays, listePays, aller, ouvrirAuth }) {
             <div className="phone">
               <div className="screen">
                 <div className="screen-top">
-                  <div className="dot"><span /><span /><span /></div>
+                  <div className="dot" aria-hidden="true"><span /><span /><span /></div>
                   <span className="chip">{t('acc_suivi')}</span>
                 </div>
                 <h4>{t('acc_bilan')}</h4>
@@ -72,6 +72,9 @@ export default function Accueil({ pays, listePays, aller, ouvrirAuth }) {
               </div>
               <div className="float-card fc1">{t('acc_flot1')}</div>
               <div className="float-card fc2">{t('acc_flot2')}</div>
+              <p className="exemple-note">
+                <b>{t('acc_exemple')}</b> {t('acc_exemple_note')}
+              </p>
             </div>
           </div>
         </div>
